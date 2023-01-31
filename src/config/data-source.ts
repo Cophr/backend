@@ -10,6 +10,7 @@ export const dataSourceOptions: DataSourceOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   entities: [__dirname + "/../**/*.entity.js"],
+  migrations: [__dirname + "/../database/migrations/*.js"],
   extra: {
     charset: "utf8mb4_unicode_ci",
   },
