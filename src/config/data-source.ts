@@ -9,6 +9,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
+  timezone: process.env.DB_TIMEZONE,
   entities: [__dirname + "/../**/*.entity.js"],
   migrations: [__dirname + "/../database/migrations/*.js"],
   extra: {
