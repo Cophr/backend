@@ -1,7 +1,23 @@
 import { plainToInstance } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsString, validateSync } from "class-validator";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  validateSync,
+} from "class-validator";
+
+export enum Environment {
+  Development = "development",
+  Production = "production",
+  Test = "test",
+  Provision = "provision",
+}
 
 class EnvironmentVariables {
+  @IsEnum(Environment)
+  NODE_ENV: Environment = Environment.Production;
+
   @IsString()
   @IsNotEmpty()
   DB_HOST: string;
