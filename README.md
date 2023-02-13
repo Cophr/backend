@@ -58,6 +58,25 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Migration
+
+```bash
+# build and according to dist/**/*.entity.js difference between previous and now to generate sql queries
+$ yarn migration:generate src/database/migrations/{THIS_migration_DO}
+
+# build and create new empty migration which custom sql queries
+$ yarn migration:create src/database/migrations/{THIS_migration_DO}
+
+# build and run with sql queries to update a database
+$ yarn migration:run
+
+# build and view current status which database migration version
+$ yarn migration:show
+
+# build and revert database to previous version
+$ yarn migration:revert
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
