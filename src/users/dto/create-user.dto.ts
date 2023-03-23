@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, PickType } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, Length } from "class-validator";
 
 export class CreateUserDto {
@@ -50,3 +50,9 @@ export class CreateUserDto {
   @Length(8, 24, { message: "confirm 必須長度大於等於8個字。" })
   public readonly confirm: string;
 }
+export class CreateUserParam extends PickType(CreateUserDto, [
+  "name",
+  "email",
+  "account",
+  "password",
+] as const) {}

@@ -1,16 +1,12 @@
+import { Body, Controller, Post, UsePipes } from "@nestjs/common";
 import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  UsePipes,
-} from "@nestjs/common";
-import {
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 
 import { CreateUserDto } from "./dto/create-user.dto";
+import { CreateConflictUserError } from "./exceptions/create-conflict-error.exception";
 import { CreateEntityUserError } from "./exceptions/create-error.exception";
 import { UsersService } from "./users.service";
 import { SETTINGS } from "./users.utils";
@@ -23,17 +19,15 @@ export class UsersController {
   @ApiCreatedResponse({
     description: "使用者創建成功",
   })
+  @ApiConflictResponse({
+    description: "Data Conflict",
+    type: CreateConflictUserError,
+  })
   @ApiUnprocessableEntityResponse({
     description: "使用者格式不符",
     type: CreateEntityUserError,
   })
   create(@Body() userDto: CreateUserDto) {
-    const user = this.usersService.create(userDto);
-    if (!user) {
-      throw new BadRequestException("Have some error");
-    }
-    return {
-      message: "created OK",
-    };
+    return this.usersService.register(userDto);
   }
 }
