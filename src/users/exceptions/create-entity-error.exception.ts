@@ -38,7 +38,7 @@ export class CreateEntityUserError {
         confirm: {
           description:
             "confirm is required field.  \n" +
-            "confirm 's length must be between 8-24 characters.  \n" +
+            "confirm's length must be between 8-24 characters.  \n" +
             "confirm Should contain 1 uppercase letter, 1 lowercase letter plus numbers and special characters.  \n",
           type: "string",
         },
