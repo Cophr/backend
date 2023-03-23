@@ -3,51 +3,55 @@ import { IsEmail, IsNotEmpty, Length } from "class-validator";
 
 export class CreateUserDto {
   @ApiProperty({
-    description: "使用者信箱",
+    description: "User email",
     example: "jhon@gmail.com",
   })
-  @IsEmail({}, { message: "email 必須是信箱格式。" })
+  @IsEmail({}, { message: "email must be in mailbox format." })
   @IsNotEmpty({
-    message: "email 為必填欄位。",
+    message: "email is required field.",
   })
   public readonly email: string;
 
   @ApiProperty({
-    description: "顯示名",
+    description: "User showname",
     example: "showname",
   })
   @IsNotEmpty({
-    message: "name 為必填欄位。",
+    message: "name is required field.",
   })
   public readonly name: string;
 
   @ApiProperty({
-    description: "登入用帳號名",
+    description: "User account",
     example: "account",
   })
   @IsNotEmpty({
-    message: "account 為必填欄位。",
+    message: "account is required field.",
   })
   public readonly account: string;
 
   @ApiProperty({
-    description: "使用者密碼",
+    description: "User Password",
     example: "Password@123",
   })
   @IsNotEmpty({
-    message: "password 為必填欄位。",
+    message: "password is required field.",
   })
-  @Length(8, 24, { message: "password 長度必須於8-24個字元之間。" })
+  @Length(8, 24, {
+    message: "password's length must be between 8-24 characters.",
+  })
   public readonly password: string;
 
   @ApiProperty({
-    description: "再次確認密碼",
+    description: "check password again",
     example: "Password@123",
   })
   @IsNotEmpty({
-    message: "confirm 為必填欄位。",
+    message: "confirm is required field.",
   })
-  @Length(8, 24, { message: "confirm 必須長度大於等於8個字。" })
+  @Length(8, 24, {
+    message: "confirm's length must be between 8-24 characters.",
+  })
   public readonly confirm: string;
 }
 export class CreateUserParam extends PickType(CreateUserDto, [

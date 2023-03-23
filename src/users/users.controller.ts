@@ -7,7 +7,7 @@ import {
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { CreateConflictUserError } from "./exceptions/create-conflict-error.exception";
-import { CreateEntityUserError } from "./exceptions/create-error.exception";
+import { CreateEntityUserError } from "./exceptions/create-entity-error.exception";
 import { UsersService } from "./users.service";
 import { SETTINGS } from "./users.utils";
 
@@ -17,14 +17,14 @@ export class UsersController {
   @Post()
   @UsePipes(SETTINGS.VALIDATION_PIPE)
   @ApiCreatedResponse({
-    description: "使用者創建成功",
+    description: "Created Successfully",
   })
   @ApiConflictResponse({
     description: "Data Conflict",
     type: CreateConflictUserError,
   })
   @ApiUnprocessableEntityResponse({
-    description: "使用者格式不符",
+    description: "Data Duplication",
     type: CreateEntityUserError,
   })
   create(@Body() userDto: CreateUserDto) {
