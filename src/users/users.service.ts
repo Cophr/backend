@@ -38,6 +38,7 @@ export class UsersService {
     user.account = userDto.account;
     user.email = userDto.email;
     user.password = hash;
-    return await user.save();
+    const data = await user.save();
+    return { statusCode: 201, message: data.name + " created successfully." };
   }
 }
