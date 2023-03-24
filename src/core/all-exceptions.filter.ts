@@ -13,7 +13,7 @@ import { CustomHttpExceptionResponse } from "./models/http-exception-response.in
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
@@ -41,7 +41,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       errorMessage = "Critical internal server error occurred!";
-      fullErrorMessage = exception;
+      fullErrorMessage = JSON.stringify(exception);
     }
     const errorResponse = this.getErrorResponse(status, errorMessage, request);
     const errorLog = this.getErrorLog(
