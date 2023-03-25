@@ -44,7 +44,7 @@ export class CreateEntityUserError {
         },
       },
     },
-    example: "email is required field.",
+    example: ["email is required field.", "email must be in mailbox format."],
   })
   public readonly error: string[];
 }
