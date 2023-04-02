@@ -7,7 +7,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { dataSourceOptions } from "./config/data-source";
 import { validate } from "./config/env.validation";
-import { AllExceptionsFilter } from "./core/all-exceptions.filter";
+import { AllExceptionsFilter } from "./filters/all-exception.filter";
 import { UsersModule } from "./users/users.module";
 
 @Module({
