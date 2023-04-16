@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
 
 @Entity({ name: "users" })
@@ -15,18 +14,17 @@ export class UserEntity extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ unique: true })
+  @Column()
   name: string;
 
   @Column({ unique: true })
   account: string;
 
-  @Column()
+  @Column({
+    length: 60,
+  })
   password: string;
 
   @CreateDateColumn()
   createAt: Date;
-
-  @UpdateDateColumn()
-  updateAt: Date;
 }
