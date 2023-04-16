@@ -13,7 +13,7 @@ async function bootstrap() {
   await app.listen(3000);
 }
 
-const logStream = fs.createWriteStream("api.log", {
+const logStream = fs.createWriteStream("./log/access.log", {
   flags: "a", // append
 });
 

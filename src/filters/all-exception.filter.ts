@@ -85,7 +85,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   };
 
   private writeErrorLogToFile = (errorLog: string): void => {
-    fs.appendFile("error.log", errorLog, "utf8", err => {
+    fs.appendFile("./log/error.log", errorLog, "utf8", err => {
       if (err) throw err;
     });
   };
