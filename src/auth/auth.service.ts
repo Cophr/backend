@@ -2,11 +2,13 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 import { UserEntity } from "src/users/entities/user.entity";
+import { UsersService } from "src/users/users.service";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class AuthService {
   constructor(
+    private usersService: UsersService,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
   ) {}
@@ -29,5 +31,6 @@ export class AuthService {
         throw error;
       }
     }
+    return this.usersService.create(userDto);
   }
 }
