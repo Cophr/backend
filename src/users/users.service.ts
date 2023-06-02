@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -16,6 +16,7 @@ export class UsersService {
     user.password = hash;
     await user.save();
     return {
+      statusCode: HttpStatus.CREATED,
       message: "創建成功",
     };
   }
