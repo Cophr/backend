@@ -1,4 +1,5 @@
 import * as dotenv from "dotenv";
+import { UserEntity } from "src/users/entities/user.entity";
 import { DataSource, DataSourceOptions } from "typeorm";
 
 dotenv.config();
@@ -11,6 +12,23 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.DB_DATABASE,
   timezone: process.env.DB_TIMEZONE,
   entities: [__dirname + "/../**/*.entity.js"],
+  migrations: [__dirname + "/../database/migrations/*.js"],
+  extra: {
+    charset: "utf8mb4_unicode_ci",
+  },
+  synchronize: false,
+  logging: false,
+};
+
+export const dataSourceJest: DataSourceOptions = {
+  type: "mysql",
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT, 10),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  timezone: process.env.DB_TIMEZONE,
+  entities: [UserEntity],
   migrations: [__dirname + "/../database/migrations/*.js"],
   extra: {
     charset: "utf8mb4_unicode_ci",
