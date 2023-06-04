@@ -1,6 +1,7 @@
 import {
   ArgumentMetadata,
   BadRequestException,
+  ConflictException,
   HttpStatus,
   ValidationPipe,
 } from "@nestjs/common";
@@ -194,6 +195,30 @@ describe("AuthController", () => {
           error: "Bad Request",
         });
       });
+    });
+    afterEach(async () => {
+      if (userRepository && userRepository.clear) {
+        await userRepository.clear();
+      }
+    });
+    it("應該會發生資料使用者重覆，並返回 409 狀態碼", async () => {
+      const createUserDto1: CreateUserDto = {
+        email: "jhon1@gmail.com",
+        name: "displayname",
+        account: "account1",
+        password: "Password@123",
+      };
+      try {
+        await authService.register(createUserDto1);
+        await authService.register(createUserDto1);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.response).toEqual({
+          statusCode: 409,
+          message: ["email 已被註冊。", "account 已被註冊。"],
+          error: "Conflict",
+        });
+      }
     });
     afterEach(async () => {
       if (userRepository && userRepository.clear) {
