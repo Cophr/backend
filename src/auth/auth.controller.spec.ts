@@ -1,3 +1,9 @@
+import {
+  ArgumentMetadata,
+  BadRequestException,
+  HttpStatus,
+  ValidationPipe,
+} from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { plainToInstance } from "class-transformer";
@@ -16,6 +22,13 @@ describe("AuthController", () => {
   let authController: AuthController;
   let authService: AuthService;
   let userRepository: Repository<UserEntity>;
+  const target: ValidationPipe = new ValidationPipe({
+    errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+    stopAtFirstError: false,
+    disableErrorMessages: false,
+    transform: true,
+    whitelist: true,
+  });
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TypeOrmModule.forRoot(dataSourceJest)],
@@ -25,7 +38,7 @@ describe("AuthController", () => {
         UsersService,
         {
           provide: getRepositoryToken(UserEntity),
-          useValue: UserEntity, // 使用測試資料庫的 Repository
+          useValue: Repository<UserEntity>, // 使用測試資料庫的 Repository
         },
       ],
     }).compile();
@@ -148,6 +161,39 @@ describe("AuthController", () => {
       jest.spyOn(authService, "register").mockResolvedValue(expectedResponse);
       const result = await authController.register(createUserDto);
       expect(result).toEqual(expectedResponse);
+    });
+    afterEach(async () => {
+      if (userRepository && userRepository.clear) {
+        await userRepository.clear();
+      }
+    });
+    it("應該會發生資料驗證失敗，並返回 406 狀態碼", async () => {
+      const createUserDto: CreateUserDto = {
+        email: "",
+        name: "",
+        account: "",
+        password: "",
+      };
+      const metadata: ArgumentMetadata = {
+        type: "body",
+        metatype: CreateUserDto,
+        data: "@Body()",
+      };
+      await target.transform(createUserDto, metadata).catch(error => {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.response).toEqual({
+          statusCode: 400,
+          message: [
+            "email 為必填欄位。",
+            "email 必須是信箱格式。",
+            "name 為必填欄位。",
+            "account 為必填欄位。",
+            "password 必須長度大於等於8個字。",
+            "password 為必填欄位。",
+          ],
+          error: "Bad Request",
+        });
+      });
     });
     afterEach(async () => {
       if (userRepository && userRepository.clear) {
