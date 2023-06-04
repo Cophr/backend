@@ -38,7 +38,7 @@ describe("AuthController", () => {
         UsersService,
         {
           provide: getRepositoryToken(UserEntity),
-          useValue: Repository<UserEntity>, // 使用測試資料庫的 Repository
+          useValue: UserEntity, // 使用測試資料庫的 Repository
         },
       ],
     }).compile();
