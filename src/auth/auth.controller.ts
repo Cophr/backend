@@ -34,7 +34,7 @@ export class AuthController {
     description: "使用者格式不符",
     type: CreateUserBadrequestError,
   })
-  create(@Body() userDto: CreateUserDto) {
+  register(@Body() userDto: CreateUserDto) {
     return this.authService.register(userDto);
   }
 }
