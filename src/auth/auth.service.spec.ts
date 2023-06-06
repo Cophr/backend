@@ -49,11 +49,6 @@ describe("AuthService", () => {
       expect(user.statusCode).toEqual(HttpStatus.CREATED);
       expect(user.message).toEqual("創建成功");
     });
-    afterEach(async () => {
-      if (userRepository && userRepository.clear) {
-        await userRepository.clear();
-      }
-    });
     it("應該會發生 email、account 已被註冊衝突", async () => {
       const createUserDto1: CreateUserDto = {
         email: "jhon@gmail.com",
@@ -71,11 +66,6 @@ describe("AuthService", () => {
           message: ["email 已被註冊。", "account 已被註冊。"],
           error: "Conflict",
         });
-      }
-    });
-    afterEach(async () => {
-      if (userRepository && userRepository.clear) {
-        await userRepository.clear();
       }
     });
     it("應該會發生 email 已被註冊衝突", async () => {
@@ -105,11 +95,6 @@ describe("AuthService", () => {
         });
       }
     });
-    afterEach(async () => {
-      if (userRepository && userRepository.clear) {
-        await userRepository.clear();
-      }
-    });
     it("應該會發生 account 已被註冊衝突", async () => {
       const test_data1: CreateUserDto = {
         email: "jhon@gmail.com",
@@ -137,10 +122,10 @@ describe("AuthService", () => {
         });
       }
     });
-    afterEach(async () => {
-      if (userRepository && userRepository.clear) {
-        await userRepository.clear();
-      }
-    });
+  });
+  afterEach(async () => {
+    if (userRepository && userRepository.clear) {
+      await userRepository.clear();
+    }
   });
 });

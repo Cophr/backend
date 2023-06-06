@@ -163,11 +163,6 @@ describe("AuthController", () => {
       const result = await authController.register(createUserDto);
       expect(result).toEqual(expectedResponse);
     });
-    afterEach(async () => {
-      if (userRepository && userRepository.clear) {
-        await userRepository.clear();
-      }
-    });
     it("應該會發生資料驗證失敗，並返回 406 狀態碼", async () => {
       const createUserDto: CreateUserDto = {
         email: "",
@@ -196,11 +191,6 @@ describe("AuthController", () => {
         });
       });
     });
-    afterEach(async () => {
-      if (userRepository && userRepository.clear) {
-        await userRepository.clear();
-      }
-    });
     it("應該會發生資料使用者重覆，並返回 409 狀態碼", async () => {
       const createUserDto1: CreateUserDto = {
         email: "jhon1@gmail.com",
@@ -220,10 +210,10 @@ describe("AuthController", () => {
         });
       }
     });
-    afterEach(async () => {
-      if (userRepository && userRepository.clear) {
-        await userRepository.clear();
-      }
-    });
+  });
+  afterEach(async () => {
+    if (userRepository && userRepository.clear) {
+      await userRepository.clear();
+    }
   });
 });
