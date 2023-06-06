@@ -11,7 +11,7 @@ export class UserInitMigration1685726623031 implements MigrationInterface {
         \`name\` varchar(255) NOT NULL,
         \`account\` varchar(255) NOT NULL,
         \`password\` varchar(60) NULL,
-        \`createAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         UNIQUE INDEX \`IDX_97672ac88f789774dd47f7c8be\` (\`email\`),
         UNIQUE INDEX \`IDX_dd44b05034165835d6dcc18d68\` (\`account\`),
         PRIMARY KEY (\`id\`)

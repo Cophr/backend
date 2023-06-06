@@ -24,5 +24,5 @@ export class UserEntity extends BaseEntity {
   password: string;
 
   @CreateDateColumn()
-  createAt: Date;
+  createdAt: Date;
 }
