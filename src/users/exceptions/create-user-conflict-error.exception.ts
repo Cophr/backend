@@ -17,10 +17,6 @@ export class CreateUserConflictError {
           description: "email 已被註冊。  \n",
           type: "string",
         },
-        name: {
-          description: "name 已被註冊。  \n",
-          type: "string",
-        },
         account: {
           description: "account 已被註冊。 \n",
           type: "string",
