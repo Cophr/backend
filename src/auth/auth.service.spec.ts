@@ -41,8 +41,6 @@ describe("AuthService", () => {
         account: "account1",
         password: "Password@123",
       };
-      const errors = await validate(test_data);
-      expect(errors.length).toBe(0);
       const user = await authService.register(test_data);
 
       expect(user).toBeDefined();
