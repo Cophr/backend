@@ -163,7 +163,7 @@ describe("AuthController", () => {
       const result = await authController.register(createUserDto);
       expect(result).toEqual(expectedResponse);
     });
-    it("應該會發生資料驗證失敗，並返回 406 狀態碼", async () => {
+    it("應該會發生資料驗證失敗，並返回 400 狀態碼", async () => {
       const createUserDto: CreateUserDto = {
         email: "",
         name: "",
