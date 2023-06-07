@@ -13,11 +13,11 @@ export class AuthService {
     private userRepository: Repository<UserEntity>,
   ) {}
   async register(userDto: CreateUserDto) {
-    try {
-      const existingUser = await this.userRepository.findOne({
-        where: [{ email: userDto.email }, { account: userDto.account }],
-      });
+    const existingUser = await this.userRepository.findOne({
+      where: [{ email: userDto.email }, { account: userDto.account }],
+    });
 
+    if (existingUser) {
       const keys = ["email", "account"];
       const conflictedAttributes = [];
       keys.forEach(key => {
@@ -26,10 +26,6 @@ export class AuthService {
         }
       });
       throw new ConflictException(conflictedAttributes);
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        throw error;
-      }
     }
     return this.usersService.create(userDto);
   }
