@@ -1,19 +1,13 @@
-import { HttpStatus, INestApplication, ValidationPipe } from "@nestjs/common";
+import { INestApplication } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 import { AppModule } from "./app.module";
+import { validationPipe } from "./pipe/validation-pipe";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-      stopAtFirstError: false,
-      disableErrorMessages: false,
-      whitelist: true,
-    }),
-  );
+  app.useGlobalPipes(validationPipe);
   setupSwagger(app);
   await app.listen(3000);
 }
