@@ -10,12 +10,12 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { dataSourceJest } from "src/config/data-source";
-import { UserEntity } from "src/users/entities/user.entity";
-import { CreateUserRespose } from "src/users/resposes/create-user-respose";
-import { UsersService } from "src/users/users.service";
+import { UserEntity } from "src/user/entities/user.entity";
+import { CreateUserRespose } from "src/user/resposes/create-user-respose";
+import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 
-import { CreateUserDto } from "../users/dto/create-user.dto";
+import { CreateUserDto } from "../user/dto/create-user.dto";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 
@@ -36,7 +36,7 @@ describe("AuthController", () => {
       controllers: [AuthController],
       providers: [
         AuthService,
-        UsersService,
+        UserService,
         {
           provide: getRepositoryToken(UserEntity),
           useValue: UserEntity, // 使用測試資料庫的 Repository

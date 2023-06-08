@@ -1,14 +1,14 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
-import { UserEntity } from "src/users/entities/user.entity";
-import { UsersService } from "src/users/users.service";
+import { CreateUserDto } from "src/user/dto/create-user.dto";
+import { UserEntity } from "src/user/entities/user.entity";
+import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private userService: UserService,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
   ) {}
@@ -27,6 +27,6 @@ export class AuthService {
       });
       throw new ConflictException(conflictedAttributes);
     }
-    return this.usersService.create(userDto);
+    return this.userService.create(userDto);
   }
 }

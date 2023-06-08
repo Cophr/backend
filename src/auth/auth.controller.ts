@@ -6,10 +6,10 @@ import {
   ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
-import { CreateUserBadrequestError } from "src/users/exceptions/create-user-badrequest-error.exception";
-import { CreateUserConflictError } from "src/users/exceptions/create-user-conflict-error.exception";
-import { CreateUserRespose } from "src/users/resposes/create-user-respose";
+import { CreateUserDto } from "src/user/dto/create-user.dto";
+import { CreateUserBadrequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
+import { CreateUserConflictError } from "src/user/exceptions/create-user-conflict-error.exception";
+import { CreateUserRespose } from "src/user/resposes/create-user-respose";
 
 import { AuthService } from "./auth.service";
 

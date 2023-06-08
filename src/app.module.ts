@@ -7,7 +7,7 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
 import { dataSourceOptions } from "./config/data-source";
 import { validate } from "./config/env.validation";
-import { UsersModule } from "./users/users.module";
+import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { UsersModule } from "./users/users.module";
       validate,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
-    UsersModule,
+    UserModule,
     AuthModule,
   ],
   controllers: [AppController],

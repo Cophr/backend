@@ -5,7 +5,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UserEntity } from "./entities/user.entity";
 
 @Injectable()
-export class UsersService {
+export class UserService {
   async create(userDto: CreateUserDto) {
     const hash = await bcrypt.hashSync(userDto.password, 5);
     const user = new UserEntity();

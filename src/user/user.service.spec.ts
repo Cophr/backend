@@ -5,16 +5,16 @@ import { dataSourceJest } from "src/config/data-source";
 
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UserEntity } from "./entities/user.entity";
-import { UsersService } from "./users.service";
+import { UserService } from "./user.service";
 
-describe("UsersService", () => {
-  let userService: UsersService;
+describe("UserService", () => {
+  let userService: UserService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TypeOrmModule.forRoot(dataSourceJest)],
       providers: [
-        UsersService,
+        UserService,
         {
           provide: getRepositoryToken(UserEntity),
           useValue: UserEntity, // 使用測試資料庫的 Repository
@@ -22,7 +22,7 @@ describe("UsersService", () => {
       ],
     }).compile();
 
-    userService = module.get<UsersService>(UsersService);
+    userService = module.get<UserService>(UserService);
   });
 
   it("應該會創建 一個使用者", async () => {

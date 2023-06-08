@@ -3,9 +3,9 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { validate } from "class-validator";
 import { dataSourceJest } from "src/config/data-source";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
-import { UserEntity } from "src/users/entities/user.entity";
-import { UsersService } from "src/users/users.service";
+import { CreateUserDto } from "src/user/dto/create-user.dto";
+import { UserEntity } from "src/user/entities/user.entity";
+import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 
 import { AuthService } from "./auth.service";
@@ -19,7 +19,7 @@ describe("AuthService", () => {
       imports: [TypeOrmModule.forRoot(dataSourceJest)],
       providers: [
         AuthService,
-        UsersService,
+        UserService,
         {
           provide: getRepositoryToken(UserEntity),
           useValue: UserEntity, // 使用測試資料庫的 Repository
