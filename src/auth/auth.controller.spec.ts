@@ -7,8 +7,6 @@ import {
 } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
 import { dataSourceJest } from "src/config/data-source";
 import { UserEntity } from "src/user/entities/user.entity";
 import { CreateUserRespose } from "src/user/resposes/create-user-respose";
@@ -52,99 +50,133 @@ describe("AuthController", () => {
   });
   describe("createUser - DTO", () => {
     it("應該會發生 email 欄位未填驗證失敗", async () => {
-      const test_data: CreateUserDto = {
+      const createUserDto: CreateUserDto = {
         email: "",
         name: "displayname",
         account: "account",
         password: "Password@123",
       };
-
-      const Dto = plainToInstance(CreateUserDto, test_data);
-      const errors = await validate(Dto);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].constraints).toHaveProperty(
-        "isNotEmpty",
-        "email 為必填欄位。",
-      );
+      const metadata: ArgumentMetadata = {
+        type: "body",
+        metatype: CreateUserDto,
+        data: "@Body()",
+      };
+      await target.transform(createUserDto, metadata).catch(error => {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.response).toEqual({
+          statusCode: 400,
+          message: ["email 為必填欄位。", "email 必須是信箱格式。"],
+          error: "Bad Request",
+        });
+      });
     });
     it("應該會發生 email 欄位格式驗證失敗", async () => {
-      const test_data: CreateUserDto = {
+      const createUserDto: CreateUserDto = {
         email: "jhon",
         name: "displayname",
         account: "account",
         password: "Password@123",
       };
-      const Dto = plainToInstance(CreateUserDto, test_data);
-      const errors = await validate(Dto);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].constraints).toHaveProperty(
-        "isEmail",
-        "email 必須是信箱格式。",
-      );
+      const metadata: ArgumentMetadata = {
+        type: "body",
+        metatype: CreateUserDto,
+        data: "@Body()",
+      };
+      await target.transform(createUserDto, metadata).catch(error => {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.response).toEqual({
+          statusCode: 400,
+          message: ["email 必須是信箱格式。"],
+          error: "Bad Request",
+        });
+      });
     });
     it("應該會發生 name 欄位未填驗證失敗", async () => {
-      const test_data: CreateUserDto = {
+      const createUserDto: CreateUserDto = {
         email: "jhon@gmail.com",
         name: "",
         account: "account",
         password: "Password@123",
       };
-
-      const Dto = plainToInstance(CreateUserDto, test_data);
-      const errors = await validate(Dto);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].constraints).toHaveProperty(
-        "isNotEmpty",
-        "name 為必填欄位。",
-      );
+      const metadata: ArgumentMetadata = {
+        type: "body",
+        metatype: CreateUserDto,
+        data: "@Body()",
+      };
+      await target.transform(createUserDto, metadata).catch(error => {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.response).toEqual({
+          statusCode: 400,
+          message: ["name 為必填欄位。"],
+          error: "Bad Request",
+        });
+      });
     });
     it("應該會發生 account 欄位未填驗證失敗", async () => {
-      const test_data: CreateUserDto = {
+      const createUserDto: CreateUserDto = {
         email: "jhon@gmail.com",
         name: "displayname",
         account: "",
         password: "Password@123",
       };
-
-      const Dto = plainToInstance(CreateUserDto, test_data);
-      const errors = await validate(Dto);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].constraints).toHaveProperty(
-        "isNotEmpty",
-        "account 為必填欄位。",
-      );
+      const metadata: ArgumentMetadata = {
+        type: "body",
+        metatype: CreateUserDto,
+        data: "@Body()",
+      };
+      await target.transform(createUserDto, metadata).catch(error => {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.response).toEqual({
+          statusCode: 400,
+          message: ["account 為必填欄位。"],
+          error: "Bad Request",
+        });
+      });
     });
     it("應該會發生 password 欄位未填驗證失敗", async () => {
-      const test_data: CreateUserDto = {
+      const createUserDto: CreateUserDto = {
         email: "jhon@gmail.com",
         name: "displayname",
         account: "account",
         password: "",
       };
-
-      const Dto = plainToInstance(CreateUserDto, test_data);
-      const errors = await validate(Dto);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].constraints).toHaveProperty(
-        "isNotEmpty",
-        "password 為必填欄位。",
-      );
+      const metadata: ArgumentMetadata = {
+        type: "body",
+        metatype: CreateUserDto,
+        data: "@Body()",
+      };
+      await target.transform(createUserDto, metadata).catch(error => {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.response).toEqual({
+          statusCode: 400,
+          message: [
+            "password 必須長度大於等於8個字。",
+            "password 為必填欄位。",
+          ],
+          error: "Bad Request",
+        });
+      });
     });
     it("應該會發生 password 欄位長度驗證失敗", async () => {
-      const test_data: CreateUserDto = {
+      const createUserDto: CreateUserDto = {
         email: "jhon@gmail.com",
         name: "displayname",
         account: "account",
         password: "123",
       };
-
-      const Dto = plainToInstance(CreateUserDto, test_data);
-      const errors = await validate(Dto);
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].constraints).toHaveProperty(
-        "minLength",
-        "password 必須長度大於等於8個字。",
-      );
+      const metadata: ArgumentMetadata = {
+        type: "body",
+        metatype: CreateUserDto,
+        data: "@Body()",
+      };
+      await target.transform(createUserDto, metadata).catch(error => {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.response).toEqual({
+          statusCode: 400,
+          message: ["password 必須長度大於等於8個字。"],
+          error: "Bad Request",
+        });
+      });
     });
   });
   describe("create", () => {
