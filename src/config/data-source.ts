@@ -1,31 +1,32 @@
 import * as dotenv from "dotenv";
 import { UserEntity } from "src/user/entities/user.entity";
-import { DataSource, DataSourceOptions } from "typeorm";
+import { type DataSourceOptions, DataSource } from "typeorm";
 
 dotenv.config();
 export const dataSourceOptions: DataSourceOptions = {
-  type: "mysql",
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT, 10),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  timezone: process.env.DB_TIMEZONE,
-  entities: [__dirname + "/../**/*.entity.js"],
-  migrations: [__dirname + "/../database/migrations/*.js"],
+  entities: [`${__dirname}/../**/*.entity.js`],
   extra: {
     charset: "utf8mb4_unicode_ci",
   },
-  synchronize: false,
+  host: process.env.DB_HOST,
   logging: false,
+  migrations: [`${__dirname}/../database/migrations/*.js`],
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT ?? "", 10),
+  synchronize: false,
+  timezone: process.env.DB_TIMEZONE,
+  type: "mysql",
+  username: process.env.DB_USERNAME,
 };
 
 export const dataSourceJest: DataSourceOptions = {
-  type: "sqlite",
   database: ":memory:",
   entities: [UserEntity],
   synchronize: true,
+  type: "sqlite",
 };
 
 const dataSource = new DataSource(dataSourceOptions);
+
 export default dataSource;

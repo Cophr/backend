@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import type { MigrationInterface, QueryRunner } from "typeorm";
 
 export class UserInitMigration1685726623031 implements MigrationInterface {
   name = "UserInitMigration1685726623031";
@@ -23,9 +23,11 @@ export class UserInitMigration1685726623031 implements MigrationInterface {
     await queryRunner.query(
       `DROP INDEX \`IDX_dd44b05034165835d6dcc18d68\` ON \`users\``,
     );
+
     await queryRunner.query(
       `DROP INDEX \`IDX_97672ac88f789774dd47f7c8be\` ON \`users\``,
     );
+
     await queryRunner.query(`DROP TABLE \`users\``);
   }
 }

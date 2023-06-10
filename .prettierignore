@@ -1,0 +1,7 @@
+build
+dist
+coverage
+e2e
+node_modules
+pnpm-lock.yaml
+*.lock

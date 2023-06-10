@@ -17,10 +17,11 @@ import { AuthService } from "./auth.service";
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
   @Post("register")
   @ApiOperation({
-    summary: "使用者註冊",
     description: "會檢查是否重複過的資料",
+    summary: "使用者註冊",
   })
   @ApiCreatedResponse({
     description: "使用者創建成功",
@@ -34,7 +35,7 @@ export class AuthController {
     description: "使用者格式不符",
     type: CreateUserBadrequestError,
   })
-  register(@Body() userDto: CreateUserDto) {
+  async register(@Body() userDto: CreateUserDto) {
     return this.authService.register(userDto);
   }
 }
