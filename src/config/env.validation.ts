@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { plainToInstance } from "class-transformer";
 import {
   IsEnum,

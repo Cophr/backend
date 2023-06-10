@@ -1,4 +1,4 @@
-import { ConflictException } from "@nestjs/common";
+import { type HttpException, ConflictException } from "@nestjs/common";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { dataSourceJest } from "src/config/data-source";
@@ -14,7 +14,7 @@ import { AuthService } from "./auth.service";
 describe("AuthController", () => {
   let authController: AuthController;
   let authService: AuthService;
-  let userRepository: Repository<UserEntity>;
+  let userRepository: Repository<UserEntity> | undefined;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -65,23 +65,21 @@ describe("AuthController", () => {
         password: "Password@123",
       };
 
-      try {
-        await authService.register(createUserDto1);
-        await authService.register(createUserDto1);
-      } catch (error) {
-        expect(error).toBeInstanceOf(ConflictException);
-        expect(error.response).toEqual({
-          error: "Conflict",
-          message: ["email 已被註冊。", "account 已被註冊。"],
-          statusCode: 409,
+      await authService.register(createUserDto1);
+      await authService
+        .register(createUserDto1)
+        .catch((error: HttpException) => {
+          expect(error).toBeInstanceOf(ConflictException);
+          expect(error.getResponse()).toEqual({
+            error: "Conflict",
+            message: ["email 已被註冊。", "account 已被註冊。"],
+            statusCode: 409,
+          });
         });
-      }
     });
   });
 
   afterEach(async () => {
-    if (userRepository && userRepository.clear) {
-      await userRepository.clear();
-    }
+    await userRepository?.clear();
   });
 });

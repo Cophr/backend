@@ -1,4 +1,8 @@
-import { ConflictException, HttpStatus } from "@nestjs/common";
+import {
+  type HttpException,
+  ConflictException,
+  HttpStatus,
+} from "@nestjs/common";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { validate } from "class-validator";
@@ -12,7 +16,7 @@ import { AuthService } from "./auth.service";
 
 describe("AuthService", () => {
   let authService: AuthService;
-  let userRepository: Repository<UserEntity>;
+  let userRepository: Repository<UserEntity> | undefined;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -57,17 +61,17 @@ describe("AuthService", () => {
         password: "Password@123",
       };
 
-      try {
-        await authService.register(createUserDto1);
-        await authService.register(createUserDto1);
-      } catch (error) {
-        expect(error).toBeInstanceOf(ConflictException);
-        expect(error.response).toEqual({
-          error: "Conflict",
-          message: ["email 已被註冊。", "account 已被註冊。"],
-          statusCode: 409,
+      await authService.register(createUserDto1);
+      await authService
+        .register(createUserDto1)
+        .catch((error: HttpException) => {
+          expect(error).toBeInstanceOf(ConflictException);
+          expect(error.getResponse()).toEqual({
+            error: "Conflict",
+            message: ["email 已被註冊。", "account 已被註冊。"],
+            statusCode: 409,
+          });
         });
-      }
     });
 
     it("應該會發生 email 已被註冊衝突", async () => {
@@ -86,17 +90,15 @@ describe("AuthService", () => {
       const errors = await validate(rawUser1);
 
       expect(errors.length).toBe(0);
-      try {
-        await authService.register(rawUser1);
-        await authService.register(rawUser2);
-      } catch (error) {
+      await authService.register(rawUser1);
+      await authService.register(rawUser2).catch((error: HttpException) => {
         expect(error).toBeInstanceOf(ConflictException);
-        expect(error.response).toEqual({
+        expect(error.getResponse()).toEqual({
           error: "Conflict",
           message: ["email 已被註冊。"],
           statusCode: 409,
         });
-      }
+      });
     });
 
     it("應該會發生 account 已被註冊衝突", async () => {
@@ -115,23 +117,19 @@ describe("AuthService", () => {
       const errors = await validate(rawUser1);
 
       expect(errors.length).toBe(0);
-      try {
-        await authService.register(rawUser1);
-        await authService.register(rawUser2);
-      } catch (error) {
+      await authService.register(rawUser1);
+      await authService.register(rawUser2).catch((error: HttpException) => {
         expect(error).toBeInstanceOf(ConflictException);
-        expect(error.response).toEqual({
+        expect(error.getResponse()).toEqual({
           error: "Conflict",
           message: ["account 已被註冊。"],
           statusCode: 409,
         });
-      }
+      });
     });
   });
 
   afterEach(async () => {
-    if (userRepository && userRepository.clear) {
-      await userRepository.clear();
-    }
+    await userRepository?.clear();
   });
 });

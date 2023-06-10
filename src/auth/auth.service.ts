@@ -8,9 +8,9 @@ import { Repository } from "typeorm";
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
+    private readonly userService: UserService,
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async register(userDto: CreateUserDto) {
@@ -20,7 +20,7 @@ export class AuthService {
 
     if (existingUser) {
       const keys = ["email", "account"];
-      const conflictedAttributes = [];
+      const conflictedAttributes: string[] = [];
 
       keys.forEach(key => {
         if (existingUser[key] === userDto[key]) {

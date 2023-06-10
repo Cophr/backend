@@ -7,7 +7,7 @@ import { UserEntity } from "./entities/user.entity";
 @Injectable()
 export class UserService {
   async create(userDto: CreateUserDto) {
-    const hash = await bcrypt.hashSync(userDto.password, 5);
+    const hash = bcrypt.hashSync(userDto.password, 5);
     const user = new UserEntity();
 
     user.name = userDto.name;

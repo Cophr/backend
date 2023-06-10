@@ -13,7 +13,7 @@ export const dataSourceOptions: DataSourceOptions = {
   logging: false,
   migrations: [`${__dirname}/../database/migrations/*.js`],
   password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT, 10),
+  port: parseInt(process.env.DB_PORT ?? "", 10),
   synchronize: false,
   timezone: process.env.DB_TIMEZONE,
   type: "mysql",
