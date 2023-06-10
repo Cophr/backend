@@ -1,4 +1,5 @@
 import * as dotenv from "dotenv";
+import { UserEntity } from "src/user/entities/user.entity";
 import { DataSource, DataSourceOptions } from "typeorm";
 
 dotenv.config();
@@ -17,6 +18,13 @@ export const dataSourceOptions: DataSourceOptions = {
   },
   synchronize: false,
   logging: false,
+};
+
+export const dataSourceJest: DataSourceOptions = {
+  type: "sqlite",
+  database: ":memory:",
+  entities: [UserEntity],
+  synchronize: true,
 };
 
 const dataSource = new DataSource(dataSourceOptions);

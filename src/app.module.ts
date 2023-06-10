@@ -4,8 +4,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { AuthModule } from "./auth/auth.module";
 import { dataSourceOptions } from "./config/data-source";
 import { validate } from "./config/env.validation";
+import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { validate } from "./config/env.validation";
       validate,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
+    UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
