@@ -10,6 +10,7 @@ import { validate } from "./config/env.validation";
 import { UserModule } from "./user/user.module";
 
 @Module({
+  controllers: [AppController],
   imports: [
     ConfigModule.forRoot({
       validate,
@@ -18,7 +19,6 @@ import { UserModule } from "./user/user.module";
     UserModule,
     AuthModule,
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

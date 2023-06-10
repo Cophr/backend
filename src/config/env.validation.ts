@@ -10,8 +10,8 @@ import {
 export enum Environment {
   Development = "development",
   Production = "production",
-  Test = "test",
   Provision = "provision",
+  Test = "test",
 }
 
 class EnvironmentVariables {
@@ -54,5 +54,6 @@ export function validate(config: Record<string, unknown>) {
   if (errors.length > 0) {
     throw new Error(errors.toString());
   }
+
   return validatedConfig;
 }
