@@ -11,7 +11,7 @@
   ],
   "extends": [
     "eslint:all",
-    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/all",
     "plugin:typescript-sort-keys/recommended",
     "prettier"
   ],
@@ -23,14 +23,31 @@
   "ignorePatterns": [".eslintrc.js"],
   "rules": {
     // disabled rules (required)
+    "no-void": "off", // To call promise functions without other actions
     "no-magic-numbers": "off", // This will wrongly detect a number passed to a function as a magic number
+    "@typescript-eslint/no-magic-numbers": "off",
     "new-cap": "off", // The decorators will be wrongly detected
     "class-methods-use-this": "off", // some methods are not using this
+    "require-await": "off", // it will wrongly detect async methods as not having await
+    "@typescript-eslint/require-await": "off",
+    "max-params": "off", // injection constructors need many parameters
 
     // disabled rules (optional, in personal preference)
     "no-console": "off", // This will disable console.log, console.error, etc. This could be removed if we have our own logger
     "one-var": "off", // in favor to not merge variables to one
     "no-continue": "off", // in favor to use continue
+
+    // disabled typescript-eslint rules (too strict)
+    "@typescript-eslint/promise-function-async": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "@typescript-eslint/prefer-readonly-parameter-types": "off",
+    "@typescript-eslint/parameter-properties": "off",
+    "@typescript-eslint/no-extraneous-class": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/member-ordering": "off",
+    "@typescript-eslint/no-type-alias": "off",
+    "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off",
 
     // modified rules
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
@@ -81,7 +98,7 @@
     {
       "files": ["*.spec.ts", "*.e2e-spec.ts"],
       "rules": {
-        "init-declarations": "off",
+        "@typescript-eslint/init-declarations": "off",
         "max-lines-per-function": "off"
       }
     }
