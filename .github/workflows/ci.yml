@@ -67,3 +67,57 @@ jobs:
 
       - name: Unit Test
         run: yarn test
+
+  generate-swagger:
+    runs-on: ubuntu-latest
+    env:
+      SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Setup node and cache dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Nest Build
+        run: yarn build
+
+      - name: Install swaggerhub-cli
+        run: yarn global add swaggerhub-cli
+
+      - name: Read package version
+        uses: tyankatsu0105/read-package-version-actions@v1
+        id: package-version
+
+      - name: Generate Swagger JSON
+        run: yarn generate-swagger
+        env:
+          APP_SWAGGER_Version: ${{ steps.package-version.outputs.version }}
+
+      - name: Upload on Swaggerhub - Cosphr_develop
+        if: github.ref != 'refs/heads/main'
+        run: |
+          swaggerhub api:update "a20688392/Cosphr_test/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public
+
+      - name: Upload on Swaggerhub - Cosphr_main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          swaggerhub api:create "a20688392/Cosphr/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public
