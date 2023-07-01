@@ -112,7 +112,7 @@ jobs:
         env:
           APP_SWAGGER_Version: ${{ steps.package-version.outputs.version }}
 
-      - name: Upload on Swaggerhub - Cophr_develop
+      - name: Upload on Swaggerhub - Cophr_test
         if: github.ref != 'refs/heads/main'
         run: |
           swaggerhub api:update "Cophr/test/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public
