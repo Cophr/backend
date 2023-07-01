@@ -112,12 +112,12 @@ jobs:
         env:
           APP_SWAGGER_Version: ${{ steps.package-version.outputs.version }}
 
-      - name: Upload on Swaggerhub - Cosphr_develop
+      - name: Upload on Swaggerhub - Cophr_develop
         if: github.ref != 'refs/heads/main'
         run: |
-          swaggerhub api:update "a20688392/Cosphr_test/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public
+          swaggerhub api:update "Cophr/test/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public
 
-      - name: Upload on Swaggerhub - Cosphr_main
+      - name: Upload on Swaggerhub - Cophr_main
         if: github.ref == 'refs/heads/main'
         run: |
-          swaggerhub api:create "a20688392/Cosphr/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public
+          swaggerhub api:create "Cophr/main/${{ env.APP_SWAGGER_Version }}" --setdefault --file=swagger-docs.json --visibility=public
