@@ -32,7 +32,7 @@ class EnvironmentVariables {
   DB_USERNAME: string;
 
   @IsString()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   DB_PASSWORD: string;
 
   @IsString()
@@ -42,6 +42,10 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   DB_TIMEZONE: string;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {
