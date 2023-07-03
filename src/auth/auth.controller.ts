@@ -1,17 +1,22 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Request, UseGuards } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
+import { LoginUserDto } from "src/user/dto/login-user.dto";
+import { type UserEntity } from "src/user/entities/user.entity";
 import { CreateUserBadrequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
 import { CreateUserConflictError } from "src/user/exceptions/create-user-conflict-error.exception";
 import { CreateUserRespose } from "src/user/resposes/create-user-respose";
 
 import { AuthService } from "./auth.service";
+import { LocalStrategy } from "./local/local.strategy";
+import { LocalAuthGuard } from "./local/local-auth.guard";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -37,5 +42,18 @@ export class AuthController {
   })
   async register(@Body() userDto: CreateUserDto) {
     return this.authService.register(userDto);
+  }
+
+  @Post("login")
+  @UseGuards(LocalAuthGuard)
+  @ApiOperation({
+    description: "email or account as login account.",
+    summary: "user local login",
+  })
+  @ApiBody({ type: LoginUserDto })
+  async login(@Request() req: LocalStrategy): Promise<UserEntity> {
+    const user: UserEntity = req.user as UserEntity;
+
+    return user;
   }
 }
