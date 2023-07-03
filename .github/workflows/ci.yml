@@ -115,7 +115,7 @@ jobs:
       - name: Upload on Swaggerhub - Cophr_test
         if: github.ref != 'refs/heads/main'
         run: |
-          swaggerhub api:update "Cophr/test/${GITHUB_SHA::8}" --setdefault --file=swagger-docs.json --visibility=public
+          swaggerhub api:create "Cophr/test/${GITHUB_SHA::8}" --setdefault --file=swagger-docs.json --visibility=public
 
       - name: Upload on Swaggerhub - Cophr_main
         if: github.ref == 'refs/heads/main'
