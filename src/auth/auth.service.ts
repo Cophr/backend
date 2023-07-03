@@ -1,5 +1,6 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as bcrypt from "bcrypt";
 import type { CreateUserDto } from "src/user/dto/create-user.dto";
 import { UserEntity } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
@@ -32,5 +33,19 @@ export class AuthService {
     }
 
     return this.userService.create(userDto);
+  }
+
+  async validateUser(username: string, pass: string) {
+    const user: UserEntity | null = await this.userService.findOne(username);
+
+    if (user !== null) {
+      const passwordCorrect = bcrypt.compareSync(pass, user.password);
+
+      if (passwordCorrect) {
+        return user;
+      }
+    }
+
+    return null;
   }
 }
