@@ -3,16 +3,23 @@ import {
   ConflictException,
   HttpStatus,
 } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { validate } from "class-validator";
+import appConfig from "src/config/app.config";
 import { dataSourceJest } from "src/config/data-source";
+import { jwtConfig } from "src/config/jwt.config";
 import type { CreateUserDto } from "src/user/dto/create-user.dto";
 import { UserEntity } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
 import type { Repository } from "typeorm";
 
 import { AuthService } from "./auth.service";
+import { JwtStrategy } from "./jwt/jwt.strategy";
+import { LocalStrategy } from "./local/local.strategy";
 
 describe("AuthService", () => {
   let authService: AuthService;
@@ -20,7 +27,14 @@ describe("AuthService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot(dataSourceJest)],
+      imports: [
+        ConfigModule.forRoot({
+          load: [appConfig],
+        }),
+        PassportModule,
+        TypeOrmModule.forRoot(dataSourceJest),
+        JwtModule.registerAsync(jwtConfig),
+      ],
       providers: [
         AuthService,
         UserService,
@@ -29,6 +43,8 @@ describe("AuthService", () => {
           // 使用測試資料庫的 Repository
           useValue: UserEntity,
         },
+        LocalStrategy,
+        JwtStrategy,
       ],
     }).compile();
 

@@ -1,7 +1,12 @@
 import { type HttpException, ConflictException } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import appConfig from "src/config/app.config";
 import { dataSourceJest } from "src/config/data-source";
+import { jwtConfig } from "src/config/jwt.config";
 import { UserEntity } from "src/user/entities/user.entity";
 import type { CreateUserRespose } from "src/user/resposes/create-user-respose";
 import { UserService } from "src/user/user.service";
@@ -10,6 +15,8 @@ import type { Repository } from "typeorm";
 import type { CreateUserDto } from "../user/dto/create-user.dto";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { JwtStrategy } from "./jwt/jwt.strategy";
+import { LocalStrategy } from "./local/local.strategy";
 
 describe("AuthController", () => {
   let authController: AuthController;
@@ -19,7 +26,14 @@ describe("AuthController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      imports: [TypeOrmModule.forRoot(dataSourceJest)],
+      imports: [
+        ConfigModule.forRoot({
+          load: [appConfig],
+        }),
+        PassportModule,
+        TypeOrmModule.forRoot(dataSourceJest),
+        JwtModule.registerAsync(jwtConfig),
+      ],
       providers: [
         AuthService,
         UserService,
@@ -28,6 +42,8 @@ describe("AuthController", () => {
           // 使用測試資料庫的 Repository
           useValue: UserEntity,
         },
+        LocalStrategy,
+        JwtStrategy,
       ],
     }).compile();
 
