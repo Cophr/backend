@@ -1,4 +1,5 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, HttpStatus, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import type { CreateUserDto } from "src/user/dto/create-user.dto";
@@ -6,10 +7,13 @@ import { UserEntity } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 
+import { type JwtUser } from "./jwt/jwt.interface";
+
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
+    private readonly jwtService: JwtService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
@@ -33,6 +37,15 @@ export class AuthService {
     }
 
     return this.userService.create(userDto);
+  }
+
+  async login(user: JwtUser) {
+    const token = this.jwtService.sign(user);
+
+    return {
+      accessToken: token,
+      statusCode: HttpStatus.OK,
+    };
   }
 
   async validateUser(username: string, pass: string) {

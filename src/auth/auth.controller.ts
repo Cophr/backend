@@ -9,12 +9,12 @@ import {
 } from "@nestjs/swagger";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { LoginUserDto } from "src/user/dto/login-user.dto";
-import { type UserEntity } from "src/user/entities/user.entity";
 import { CreateUserBadrequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
 import { CreateUserConflictError } from "src/user/exceptions/create-user-conflict-error.exception";
 import { CreateUserRespose } from "src/user/resposes/create-user-respose";
 
 import { AuthService } from "./auth.service";
+import { type JwtUser } from "./jwt/jwt.interface";
 import { LocalStrategy } from "./local/local.strategy";
 import { LocalAuthGuard } from "./local/local-auth.guard";
 
@@ -51,9 +51,9 @@ export class AuthController {
     summary: "user local login",
   })
   @ApiBody({ type: LoginUserDto })
-  async login(@Request() req: LocalStrategy): Promise<UserEntity> {
-    const user: UserEntity = req.user as UserEntity;
+  async login(@Request() req: LocalStrategy) {
+    const user: JwtUser = req.user as JwtUser;
 
-    return user;
+    return this.authService.login(user);
   }
 }
