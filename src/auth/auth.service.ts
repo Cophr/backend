@@ -44,7 +44,7 @@ export class AuthService {
 
     return {
       accessToken: token,
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.CREATED,
     };
   }
 

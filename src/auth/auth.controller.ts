@@ -6,6 +6,7 @@ import {
   ApiCreatedResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { LoginUserDto } from "src/user/dto/login-user.dto";
@@ -14,9 +15,11 @@ import { CreateUserConflictError } from "src/user/exceptions/create-user-conflic
 import { CreateUserRespose } from "src/user/resposes/create-user-respose";
 
 import { AuthService } from "./auth.service";
+import { SelectUnauthorizedError } from "./exception/select-unauthorized-error.exception";
 import { type JwtUser } from "./jwt/jwt.interface";
 import { LocalStrategy } from "./local/local.strategy";
 import { LocalAuthGuard } from "./local/local-auth.guard";
+import { GenerateTokenRespose } from "./respose/generate-token.respose";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -47,8 +50,18 @@ export class AuthController {
   @Post("login")
   @UseGuards(LocalAuthGuard)
   @ApiOperation({
-    description: "email or account as login account.",
+    description:
+      "email or account as login account.  \n" +
+      "When the account information is correct will return token.",
     summary: "user local login",
+  })
+  @ApiCreatedResponse({
+    description: "Generate token",
+    type: GenerateTokenRespose,
+  })
+  @ApiUnauthorizedResponse({
+    description: "Account information error",
+    type: SelectUnauthorizedError,
   })
   @ApiBody({ type: LoginUserDto })
   async login(@Request() req: LocalStrategy) {
