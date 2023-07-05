@@ -4,7 +4,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { JwtModule } from "@nestjs/jwt";
+import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
@@ -23,6 +23,8 @@ import { LocalStrategy } from "./local/local.strategy";
 
 describe("AuthService", () => {
   let authService: AuthService;
+  let userService: UserService;
+  let jwtService: JwtService;
   let userRepository: Repository<UserEntity> | undefined;
 
   beforeEach(async () => {
@@ -43,11 +45,20 @@ describe("AuthService", () => {
           // 使用測試資料庫的 Repository
           useValue: UserEntity,
         },
+        {
+          provide: JwtService,
+          useValue: {
+            // 模拟JwtService中的方法
+            sign: jest.fn().mockReturnValue("mocked_token"),
+          },
+        },
         LocalStrategy,
         JwtStrategy,
       ],
     }).compile();
 
+    jwtService = module.get<JwtService>(JwtService);
+    userService = module.get<UserService>(UserService);
     authService = module.get<AuthService>(AuthService);
     userRepository = module.get<Repository<UserEntity>>(
       getRepositoryToken(UserEntity),
@@ -142,6 +153,63 @@ describe("AuthService", () => {
           statusCode: 409,
         });
       });
+    });
+  });
+
+  describe("user local login", () => {
+    it("should be login successfully.", async () => {
+      const mockUser = {
+        email: "test@example.com",
+        id: 1,
+      };
+      const expectedToken = "mocked_token";
+      const expectedStatusCode = HttpStatus.CREATED;
+
+      jest.spyOn(jwtService, "sign").mockReturnValue(expectedToken);
+
+      const result = await authService.login(mockUser);
+
+      expect(result).toEqual({
+        accessToken: expectedToken,
+        statusCode: expectedStatusCode,
+      });
+    });
+
+    it("should be validate successfully.", async () => {
+      const mockAccount = "test";
+      const mockPassword = "Password@123";
+      const mockUser: Partial<UserEntity> = {
+        account: "test",
+        email: "test@example.com",
+        id: 1,
+        name: "test",
+        password:
+          "$2b$05$zc4SaUDmE68OgrabgSoLX.CDMHZ8SD/aDeuJc7rxKmtqjP5WpH.Me",
+      };
+
+      jest
+        .spyOn(userService, "findOne")
+        .mockImplementation(async () => mockUser as UserEntity);
+
+      const result = await authService.validateUser(mockAccount, mockPassword);
+
+      expect(result).toBeDefined();
+      expect(result).toEqual({
+        email: mockUser.email,
+        id: mockUser.id,
+      });
+    });
+
+    it("should be validate failure.", async () => {
+      const mockAccount = "test";
+      const mockPassword = "Password@123";
+
+      jest.spyOn(userService, "findOne").mockImplementation(async () => null);
+
+      const result = await authService.validateUser(mockAccount, mockPassword);
+
+      expect(result).toBeDefined();
+      expect(result).toEqual(null);
     });
   });
 
