@@ -31,6 +31,7 @@ export class UserService {
 
   async findOne(account: string): Promise<UserEntity | null> {
     return this.userRepository.findOne({
+      select: ["id", "email", "name", "account", "password"],
       where: [{ email: account }, { account }],
     });
   }
