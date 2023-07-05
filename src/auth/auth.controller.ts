@@ -65,8 +65,6 @@ export class AuthController {
   })
   @ApiBody({ type: LoginUserDto })
   async login(@Request() req: LocalStrategy) {
-    const user: JwtUser = req.user as JwtUser;
-
-    return this.authService.login(user);
+    return this.authService.login(req.user as JwtUser);
   }
 }
