@@ -15,7 +15,7 @@ import { CreateUserConflictError } from "src/user/exceptions/create-user-conflic
 import { CreateUserRespose } from "src/user/resposes/create-user-respose";
 
 import { AuthService } from "./auth.service";
-import { SelectUnauthorizedError } from "./exception/select-unauthorized-error.exception";
+import { UserLoginUnauthorizedError } from "./exception/user-login-unauthorized-error.exception";
 import { type JwtUser } from "./jwt/jwt.interface";
 import { LocalStrategy } from "./local/local.strategy";
 import { LocalAuthGuard } from "./local/local-auth.guard";
@@ -61,7 +61,7 @@ export class AuthController {
   })
   @ApiUnauthorizedResponse({
     description: "Account information error",
-    type: SelectUnauthorizedError,
+    type: UserLoginUnauthorizedError,
   })
   @ApiBody({ type: LoginUserDto })
   async login(@Request() req: LocalStrategy) {

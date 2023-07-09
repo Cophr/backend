@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class SelectUnauthorizedError {
+export class UserLoginUnauthorizedError {
   @ApiProperty({
     description: "HTTP Code",
     example: "401",
