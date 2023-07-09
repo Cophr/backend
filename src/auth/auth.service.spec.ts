@@ -9,8 +9,8 @@ import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { validate } from "class-validator";
-import appConfig from "src/config/app.config";
 import { dataSourceJest } from "src/config/data-source";
+import jestConfig from "src/config/jest.config";
 import { jwtConfig } from "src/config/jwt.config";
 import type { CreateUserDto } from "src/user/dto/create-user.dto";
 import { UserEntity } from "src/user/entities/user.entity";
@@ -31,7 +31,7 @@ describe("AuthService", () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
-          load: [appConfig],
+          load: [jestConfig],
         }),
         PassportModule,
         TypeOrmModule.forRoot(dataSourceJest),

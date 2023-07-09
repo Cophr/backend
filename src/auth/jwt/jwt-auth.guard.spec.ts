@@ -3,7 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { Test } from "@nestjs/testing";
-import appConfig from "src/config/app.config";
+import jestConfig from "src/config/jest.config";
 import { jwtConfig } from "src/config/jwt.config";
 
 import { JwtStrategy } from "./jwt.strategy";
@@ -17,7 +17,7 @@ describe("LocalAuthGuard", () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
-          load: [appConfig],
+          load: [jestConfig],
         }),
         PassportModule,
         JwtModule.registerAsync(jwtConfig),

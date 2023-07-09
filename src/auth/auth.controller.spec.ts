@@ -9,8 +9,8 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import appConfig from "src/config/app.config";
 import { dataSourceJest } from "src/config/data-source";
+import jestConfig from "src/config/jest.config";
 import { jwtConfig } from "src/config/jwt.config";
 import { UserEntity } from "src/user/entities/user.entity";
 import type { CreateUserRespose } from "src/user/resposes/create-user-respose";
@@ -34,7 +34,7 @@ describe("AuthController", () => {
       controllers: [AuthController],
       imports: [
         ConfigModule.forRoot({
-          load: [appConfig],
+          load: [jestConfig],
         }),
         PassportModule,
         TypeOrmModule.forRoot(dataSourceJest),
