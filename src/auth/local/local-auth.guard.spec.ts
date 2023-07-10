@@ -1,4 +1,4 @@
-import { type ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import { type ExecutionContext, ForbiddenException } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { Test } from "@nestjs/testing";
 
@@ -86,7 +86,13 @@ describe("LocalAuthGuard", () => {
     try {
       await localAuthGuard.canActivate(mockExecutionContext);
     } catch (error) {
-      expect(error).toBeInstanceOf(UnauthorizedException);
+      if (error instanceof ForbiddenException) {
+        expect(error).toBeInstanceOf(ForbiddenException);
+        expect(error.getResponse()).toEqual({
+          message: ["Account or password is wrong."],
+          statusCode: 403,
+        });
+      }
     }
   });
 });

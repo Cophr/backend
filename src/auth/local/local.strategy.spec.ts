@@ -1,4 +1,4 @@
-import { UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException } from "@nestjs/common";
 import { type TestingModule, Test } from "@nestjs/testing";
 
 import { AuthService } from "../auth.service";
@@ -49,7 +49,7 @@ describe("LocalStrategy", () => {
     });
   });
 
-  it("should throw UnauthorizedException if user is invalid", async () => {
+  it("should throw ForbiddenException if user is invalid", async () => {
     const mockAccount = "test";
     const mockPassword = "password";
 
@@ -59,9 +59,8 @@ describe("LocalStrategy", () => {
 
     try {
       await localStrategy.validate(mockAccount, mockPassword);
-      fail("Expected to throw UnauthorizedException");
     } catch (error) {
-      expect(error).toBeInstanceOf(UnauthorizedException);
+      expect(error).toBeInstanceOf(ForbiddenException);
     }
   });
 });

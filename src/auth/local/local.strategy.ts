@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, HttpStatus, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 
@@ -15,7 +15,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.validateUser(account, password);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException({
+        message: ["Account or password is wrong."],
+        statusCode: HttpStatus.FORBIDDEN,
+      });
     }
     const payload: JwtUser = {
       id: user.id,
