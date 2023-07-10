@@ -12,14 +12,14 @@ import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { LoginUserDto } from "src/user/dto/login-user.dto";
 import { CreateUserBadrequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
 import { CreateUserConflictError } from "src/user/exceptions/create-user-conflict-error.exception";
-import { CreateUserRespose } from "src/user/resposes/create-user-respose";
+import { CreateUserResponse } from "src/user/responses/create-user-response";
 
 import { AuthService } from "./auth.service";
 import { UserLoginUnauthorizedError } from "./exception/user-login-unauthorized-error.exception";
 import { type JwtUser } from "./jwt/jwt.interface";
 import { LocalStrategy } from "./local/local.strategy";
 import { LocalAuthGuard } from "./local/local-auth.guard";
-import { GenerateTokenRespose } from "./respose/generate-token.respose";
+import { GenerateTokenResponse } from "./responses/generate-token.response";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -33,7 +33,7 @@ export class AuthController {
   })
   @ApiCreatedResponse({
     description: "使用者創建成功",
-    type: CreateUserRespose,
+    type: CreateUserResponse,
   })
   @ApiConflictResponse({
     description: "使用者資料重覆",
@@ -57,7 +57,7 @@ export class AuthController {
   })
   @ApiCreatedResponse({
     description: "Generate token",
-    type: GenerateTokenRespose,
+    type: GenerateTokenResponse,
   })
   @ApiUnauthorizedResponse({
     description: "Account information error",

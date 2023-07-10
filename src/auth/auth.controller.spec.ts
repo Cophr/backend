@@ -13,7 +13,7 @@ import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
 import { jwtConfig } from "src/config/jwt.config";
 import { UserEntity } from "src/user/entities/user.entity";
-import type { CreateUserRespose } from "src/user/resposes/create-user-respose";
+import type { CreateUserResponse } from "src/user/responses/create-user-response";
 import { UserService } from "src/user/user.service";
 import type { Repository } from "typeorm";
 
@@ -77,7 +77,7 @@ describe("AuthController", () => {
         name: "displayname",
         password: "Password@123",
       };
-      const expectedResponse: CreateUserRespose = {
+      const expectedResponse: CreateUserResponse = {
         message: "創建成功",
         statusCode: 201,
       };

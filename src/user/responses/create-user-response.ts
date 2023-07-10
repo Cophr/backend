@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateUserRespose {
+export class CreateUserResponse {
   @ApiProperty({
     description: "HTTP 回應代碼",
     example: "201",
