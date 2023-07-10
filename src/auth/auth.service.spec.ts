@@ -201,11 +201,33 @@ describe("AuthService", () => {
       });
     });
 
-    it("should be validate failure.", async () => {
+    it("when the account does not exist should be validate failure.", async () => {
       const mockAccount = "test";
       const mockPassword = "Password@123";
 
       jest.spyOn(userService, "findOne").mockImplementation(async () => null);
+
+      const result = await authService.validateUser(mockAccount, mockPassword);
+
+      expect(result).toBeDefined();
+      expect(result).toEqual(null);
+    });
+
+    it("when the account exist but password not correct should be validate failure.", async () => {
+      const mockAccount = "test";
+      const mockPassword = "Password@1234";
+      const mockUser: Partial<UserEntity> = {
+        account: "test",
+        email: "test@example.com",
+        id: 1,
+        name: "test",
+        password:
+          "$2b$05$zc4SaUDmE68OgrabgSoLX.CDMHZ8SD/aDeuJc7rxKmtqjP5WpH.Me",
+      };
+
+      jest
+        .spyOn(userService, "findOne")
+        .mockImplementation(async () => mockUser as UserEntity);
 
       const result = await authService.validateUser(mockAccount, mockPassword);
 
