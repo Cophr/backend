@@ -27,6 +27,8 @@ describe("AuthService", () => {
   let jwtService: JwtService;
   let userRepository: Repository<UserEntity> | undefined;
 
+  const fakeAccessToken = "mocked_token";
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -49,7 +51,7 @@ describe("AuthService", () => {
           provide: JwtService,
           useValue: {
             // 模拟JwtService中的方法
-            sign: jest.fn().mockReturnValue("mocked_token"),
+            sign: jest.fn().mockReturnValue(fakeAccessToken),
           },
         },
         LocalStrategy,
@@ -162,7 +164,7 @@ describe("AuthService", () => {
         email: "test@example.com",
         id: 1,
       };
-      const expectedToken = "mocked_token";
+      const expectedToken = fakeAccessToken;
       const expectedStatusCode = HttpStatus.CREATED;
 
       jest.spyOn(jwtService, "sign").mockReturnValue(expectedToken);

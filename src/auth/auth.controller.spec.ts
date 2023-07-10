@@ -29,6 +29,8 @@ describe("AuthController", () => {
   let userRepository: Repository<UserEntity> | undefined;
   let localStrategy: LocalStrategy;
 
+  const fakeAccessToken = "mocked_token";
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -52,7 +54,7 @@ describe("AuthController", () => {
           provide: JwtService,
           useValue: {
             // 模拟JwtService中的方法
-            sign: jest.fn().mockReturnValue("mocked_token"),
+            sign: jest.fn().mockReturnValue(fakeAccessToken),
           },
         },
         LocalStrategy,
@@ -111,7 +113,7 @@ describe("AuthController", () => {
 
     it("should return a token and 201 http code when account information is correct.", async () => {
       const expectedResult = {
-        accessToken: "mocked_token",
+        accessToken: fakeAccessToken,
         statusCode: HttpStatus.CREATED,
       };
 
