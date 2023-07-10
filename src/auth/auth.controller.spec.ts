@@ -124,7 +124,7 @@ describe("AuthController", () => {
       expect(result).toEqual(expectedResult);
     });
 
-    it("should return Unauthorized and 401 http code when account information is failure.", async () => {
+    it("should return Unauthorized and 401 http code when account information is wrong.", async () => {
       jest.spyOn(localStrategy, "validate").mockImplementation(() => {
         throw new UnauthorizedException();
       });

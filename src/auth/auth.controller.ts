@@ -50,13 +50,11 @@ export class AuthController {
   @Post("login")
   @UseGuards(LocalAuthGuard)
   @ApiOperation({
-    description:
-      "email or account as login account.  \n" +
-      "When the account information is correct will return token.",
-    summary: "user local login",
+    description: "Will return token when the account information is correct.",
+    summary: "login with our account",
   })
   @ApiCreatedResponse({
-    description: "Generate token",
+    description: "Success with generated token",
     type: GenerateTokenResponse,
   })
   @ApiUnauthorizedResponse({
