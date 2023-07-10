@@ -48,16 +48,16 @@ export class AuthService {
     };
   }
 
-  async validateUser(username: string, pass: string) {
+  async validateUser(username: string, password: string) {
     const user: UserEntity | null = await this.userService.findOne(username);
 
-    if (user !== null) {
-      const passwordCorrect = bcrypt.compareSync(pass, user.password);
-      const userData = { email: user.email, id: user.id };
+    if (!user) return null;
 
-      if (passwordCorrect) {
-        return userData;
-      }
+    const passwordCorrect = bcrypt.compareSync(password, user.password);
+    const userData = { email: user.email, id: user.id };
+
+    if (passwordCorrect) {
+      return userData;
     }
 
     return null;
