@@ -7,7 +7,7 @@ export class LoginUserDto {
     example: "account",
   })
   @IsNotEmpty({
-    message: "email or account as login account.",
+    message: "account field should not be empty.",
   })
   public readonly account: string;
 
