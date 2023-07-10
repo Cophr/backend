@@ -32,7 +32,7 @@ class EnvironmentVariables {
   DB_USERNAME: string;
 
   @IsString()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   DB_PASSWORD: string;
 
   @IsString()
