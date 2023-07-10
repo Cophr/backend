@@ -8,7 +8,7 @@ import { type JwtUser } from "./jwt.interface";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(configService: ConfigService) {
-    const secrect: string = configService.get("appSecret") ?? "Cophr_appSecret";
+    const secrect: string | undefined = configService.get("appSecret");
 
     super({
       ignoreExpiration: false,
