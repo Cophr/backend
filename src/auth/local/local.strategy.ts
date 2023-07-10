@@ -18,7 +18,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
     const payload: JwtUser = {
-      email: user.email,
       id: user.id,
     };
 

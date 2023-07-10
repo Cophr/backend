@@ -35,7 +35,6 @@ describe("LocalStrategy", () => {
     const mockPassword = "password";
 
     const mockUser = {
-      email: "test@example.com",
       id: 1,
     };
 
@@ -46,7 +45,6 @@ describe("LocalStrategy", () => {
     const result = await localStrategy.validate(mockAccount, mockPassword);
 
     expect(result).toEqual({
-      email: mockUser.email,
       id: mockUser.id,
     });
   });

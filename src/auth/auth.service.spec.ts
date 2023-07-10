@@ -195,7 +195,6 @@ describe("AuthService", () => {
 
       expect(result).toBeDefined();
       expect(result).toEqual({
-        email: mockUser.email,
         id: mockUser.id,
       });
     });

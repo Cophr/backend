@@ -115,9 +115,7 @@ describe("AuthController", () => {
         statusCode: HttpStatus.CREATED,
       };
 
-      jest
-        .spyOn(localStrategy, "validate")
-        .mockResolvedValue({ email: "test@example.com", id: 1 });
+      jest.spyOn(localStrategy, "validate").mockResolvedValue({ id: 1 });
 
       const result = await authController.login(localStrategy);
 
