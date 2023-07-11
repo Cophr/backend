@@ -11,14 +11,14 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { validate } from "class-validator";
 import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
-import { jwtConfig } from "src/config/jwt.config";
+import { jwtAccessConfig } from "src/config/jwt.config";
 import type { CreateUserDto } from "src/user/dto/create-user.dto";
 import { UserEntity } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
 import type { Repository } from "typeorm";
 
 import { AuthService } from "./auth.service";
-import { JwtStrategy } from "./jwt/jwt.strategy";
+import { JwtAccessStrategy } from "./jwt/jwt-access.strategy";
 import { LocalStrategy } from "./local/local.strategy";
 
 describe("AuthService", () => {
@@ -37,7 +37,7 @@ describe("AuthService", () => {
         }),
         PassportModule,
         TypeOrmModule.forRoot(dataSourceJest),
-        JwtModule.registerAsync(jwtConfig),
+        JwtModule.registerAsync(jwtAccessConfig),
       ],
       providers: [
         AuthService,
@@ -55,7 +55,7 @@ describe("AuthService", () => {
           },
         },
         LocalStrategy,
-        JwtStrategy,
+        JwtAccessStrategy,
       ],
     }).compile();
 

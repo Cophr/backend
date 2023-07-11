@@ -1,3 +1,5 @@
 export default () => ({
-  appSecret: process.env.JWT_SECRET,
+  jwtSecret: {
+    access: process.env.JWT_ACCESS_SECRET,
+  },
 });

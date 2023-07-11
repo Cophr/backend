@@ -1,20 +1,20 @@
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { type JwtModuleAsyncOptions } from "@nestjs/jwt";
 
-export const jwtConfig: JwtModuleAsyncOptions = {
+export const jwtAccessConfig: JwtModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => ({
-    secret: configService.get("appSecret"),
+    secret: configService.get("jwtSecret.access"),
     signOptions: { expiresIn: "1d" },
   }),
 };
 
-export const jwtConfigJest: JwtModuleAsyncOptions = {
+export const jwtAccessConfigJest: JwtModuleAsyncOptions = {
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => ({
-    secret: configService.get("appSecret"),
+    secret: configService.get("jwtSecret.access"),
     signOptions: { expiresIn: "1d" },
   }),
 };

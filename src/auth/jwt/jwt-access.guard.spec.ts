@@ -4,13 +4,13 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { Test } from "@nestjs/testing";
 import jestConfig from "src/config/jest.config";
-import { jwtConfig } from "src/config/jwt.config";
+import { jwtAccessConfig } from "src/config/jwt.config";
 
-import { JwtStrategy } from "./jwt.strategy";
-import { JwtAuthGuard } from "./jwt-auth.guard";
+import { JwtAccessGuard } from "./jwt-access.guard";
+import { JwtAccessStrategy } from "./jwt-access.strategy";
 
-describe("LocalAuthGuard", () => {
-  let jwtAuthGuard: JwtAuthGuard;
+describe("JwtAccessGuard", () => {
+  let jwtAccessGuard: JwtAccessGuard;
   let jwtService: JwtService;
 
   beforeEach(async () => {
@@ -20,17 +20,17 @@ describe("LocalAuthGuard", () => {
           load: [jestConfig],
         }),
         PassportModule,
-        JwtModule.registerAsync(jwtConfig),
+        JwtModule.registerAsync(jwtAccessConfig),
       ],
-      providers: [JwtAuthGuard, JwtStrategy, JwtService],
+      providers: [JwtAccessGuard, JwtAccessStrategy, JwtService],
     }).compile();
 
-    jwtAuthGuard = moduleRef.get<JwtAuthGuard>(JwtAuthGuard);
+    jwtAccessGuard = moduleRef.get<JwtAccessGuard>(JwtAccessGuard);
     jwtService = moduleRef.get<JwtService>(JwtService);
   });
 
   it("should be defined", () => {
-    expect(jwtAuthGuard).toBeDefined();
+    expect(jwtAccessGuard).toBeDefined();
   });
 
   it("should return true for a valid JWT", async () => {
@@ -48,7 +48,7 @@ describe("LocalAuthGuard", () => {
       switchToHttp: () => context,
     } as unknown as ExecutionContext;
 
-    const canActivate = await jwtAuthGuard.canActivate(context);
+    const canActivate = await jwtAccessGuard.canActivate(context);
 
     expect(canActivate).toBe(true);
   });
@@ -69,7 +69,7 @@ describe("LocalAuthGuard", () => {
     } as unknown as ExecutionContext;
 
     try {
-      await jwtAuthGuard.canActivate(context);
+      await jwtAccessGuard.canActivate(context);
     } catch (error) {
       expect(error).toBeInstanceOf(UnauthorizedException);
     }

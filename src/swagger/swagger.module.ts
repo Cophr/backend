@@ -5,10 +5,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "src/app.controller";
 import { AppService } from "src/app.service";
 import { AuthModule } from "src/auth/auth.module";
-import { JwtStrategy } from "src/auth/jwt/jwt.strategy";
+import { JwtAccessStrategy } from "src/auth/jwt/jwt-access.strategy";
 import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
-import { jwtConfigJest } from "src/config/jwt.config";
+import { jwtAccessConfigJest } from "src/config/jwt.config";
 import { UserModule } from "src/user/user.module";
 
 @Module({
@@ -21,8 +21,8 @@ import { UserModule } from "src/user/user.module";
     }),
     UserModule,
     AuthModule,
-    JwtModule.registerAsync(jwtConfigJest),
+    JwtModule.registerAsync(jwtAccessConfigJest),
   ],
-  providers: [AppService, JwtStrategy],
+  providers: [AppService, JwtAccessStrategy],
 })
 export class SwaggerGenerateModule {}

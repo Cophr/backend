@@ -6,9 +6,12 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { type JwtUser } from "./jwt.interface";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAccessStrategy extends PassportStrategy(
+  Strategy,
+  "jwt-access",
+) {
   constructor(configService: ConfigService) {
-    const secrect: string | undefined = configService.get("appSecret");
+    const secrect: string | undefined = configService.get("jwtSecret.access");
 
     super({
       ignoreExpiration: false,

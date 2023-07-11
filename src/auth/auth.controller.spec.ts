@@ -7,7 +7,7 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { type Request } from "express";
 import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
-import { jwtConfig } from "src/config/jwt.config";
+import { jwtAccessConfigJest } from "src/config/jwt.config";
 import { UserEntity } from "src/user/entities/user.entity";
 import type { CreateUserResponse } from "src/user/responses/create-user-response";
 import { UserService } from "src/user/user.service";
@@ -17,7 +17,7 @@ import type { CreateUserDto } from "../user/dto/create-user.dto";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { type JwtUser } from "./jwt/jwt.interface";
-import { JwtStrategy } from "./jwt/jwt.strategy";
+import { JwtAccessStrategy } from "./jwt/jwt-access.strategy";
 import { LocalStrategy } from "./local/local.strategy";
 import { type GenerateTokenResponse } from "./responses/generate-token.response";
 
@@ -37,7 +37,7 @@ describe("AuthController", () => {
         }),
         PassportModule,
         TypeOrmModule.forRoot(dataSourceJest),
-        JwtModule.registerAsync(jwtConfig),
+        JwtModule.registerAsync(jwtAccessConfigJest),
       ],
       providers: [
         AuthService,
@@ -55,7 +55,7 @@ describe("AuthController", () => {
           },
         },
         LocalStrategy,
-        JwtStrategy,
+        JwtAccessStrategy,
       ],
     }).compile();
 

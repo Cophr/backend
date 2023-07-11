@@ -1,3 +1,5 @@
 export default () => ({
-  appSecret: "Cophr_appSecret",
+  jwtSecret: {
+    access: "Cophr_jwtSecret_access",
+  },
 });
