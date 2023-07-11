@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -8,6 +8,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
+import { Request } from "express";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { LoginUserDto } from "src/user/dto/login-user.dto";
 import { CreateUserBadrequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
@@ -17,7 +18,6 @@ import { CreateUserResponse } from "src/user/responses/create-user-response";
 import { AuthService } from "./auth.service";
 import { UserLoginUnauthorizedError } from "./exception/user-login-unauthorized-error.exception";
 import { type JwtUser } from "./jwt/jwt.interface";
-import { LocalStrategy } from "./local/local.strategy";
 import { LocalAuthGuard } from "./local/local-auth.guard";
 import { GenerateTokenResponse } from "./responses/generate-token.response";
 
@@ -62,7 +62,7 @@ export class AuthController {
     type: UserLoginUnauthorizedError,
   })
   @ApiBody({ type: LoginUserDto })
-  async login(@Request() req: LocalStrategy) {
-    return this.authService.login(req.user as JwtUser);
+  async login(@Req() request: Request) {
+    return this.authService.login(request.user as JwtUser);
   }
 }

@@ -1,14 +1,10 @@
-import {
-  type HttpException,
-  ConflictException,
-  HttpStatus,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { type HttpException, ConflictException } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import { type Request } from "express";
 import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
 import { jwtConfig } from "src/config/jwt.config";
@@ -20,14 +16,15 @@ import type { Repository } from "typeorm";
 import type { CreateUserDto } from "../user/dto/create-user.dto";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { type JwtUser } from "./jwt/jwt.interface";
 import { JwtStrategy } from "./jwt/jwt.strategy";
 import { LocalStrategy } from "./local/local.strategy";
+import { type GenerateTokenResponse } from "./responses/generate-token.response";
 
 describe("AuthController", () => {
   let authController: AuthController;
   let authService: AuthService;
   let userRepository: Repository<UserEntity> | undefined;
-  let localStrategy: LocalStrategy;
 
   const fakeAccessToken = "mocked_token";
 
@@ -67,8 +64,6 @@ describe("AuthController", () => {
     userRepository = module.get<Repository<UserEntity>>(
       getRepositoryToken(UserEntity),
     );
-
-    localStrategy = module.get<LocalStrategy>(LocalStrategy);
   });
 
   describe("create", () => {
@@ -112,30 +107,23 @@ describe("AuthController", () => {
     });
 
     it("should return a token and 201 http code when account information is correct.", async () => {
-      const expectedResult = {
+      const request: Request = {
+        user: {
+          id: 1,
+        } as JwtUser,
+      } as unknown as Request;
+      const mockAuthService = jest.spyOn(authService, "login");
+
+      const result = await authController.login(request);
+
+      expect(mockAuthService).toHaveBeenCalledWith(request.user);
+
+      const expectedResponse: GenerateTokenResponse = {
         accessToken: fakeAccessToken,
-        statusCode: HttpStatus.CREATED,
+        statusCode: 201,
       };
 
-      jest.spyOn(localStrategy, "validate").mockResolvedValue({ id: 1 });
-
-      const result = await authController.login(localStrategy);
-
-      expect(result).toEqual(expectedResult);
-    });
-
-    it("should return Unauthorized and 401 http code when account information is wrong.", async () => {
-      jest.spyOn(localStrategy, "validate").mockImplementation(() => {
-        throw new UnauthorizedException();
-      });
-
-      jest
-        .spyOn(authService, "login")
-        .mockRejectedValue(new UnauthorizedException());
-
-      await expect(authController.login(localStrategy)).rejects.toThrowError(
-        UnauthorizedException,
-      );
+      expect(result).toEqual(expectedResponse);
     });
   });
 
