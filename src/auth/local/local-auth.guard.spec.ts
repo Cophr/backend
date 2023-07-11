@@ -65,7 +65,7 @@ describe("LocalAuthGuard", () => {
     expect(result).toBe(true);
   });
 
-  it("should return false if user is invalid", async () => {
+  it("should return Forbidden and 403 http code when account information is wrong.", async () => {
     const mockResponse = {};
     const mockExecutionContext = {
       switchToHttp: () => ({
