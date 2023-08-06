@@ -4,9 +4,9 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOperation,
   ApiTags,
-  ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Request } from "express";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
@@ -16,7 +16,7 @@ import { CreateUserConflictError } from "src/user/exceptions/create-user-conflic
 import { CreateUserResponse } from "src/user/responses/create-user-response";
 
 import { AuthService } from "./auth.service";
-import { UserLoginUnauthorizedError } from "./exception/user-login-unauthorized-error.exception";
+import { ForbiddenError } from "./exception/ForbiddenError";
 import { type JwtUser } from "./jwt/jwt.interface";
 import { LocalAuthGuard } from "./local/local-auth.guard";
 import { GenerateTokenResponse } from "./responses/generate-token.response";
@@ -57,9 +57,9 @@ export class AuthController {
     description: "Success with generated token",
     type: GenerateTokenResponse,
   })
-  @ApiUnauthorizedResponse({
+  @ApiForbiddenResponse({
     description: "Account information error",
-    type: UserLoginUnauthorizedError,
+    type: ForbiddenError,
   })
   @ApiBody({ type: LoginUserDto })
   async login(@Req() request: Request) {
