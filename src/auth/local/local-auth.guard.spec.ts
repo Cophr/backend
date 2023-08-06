@@ -18,7 +18,6 @@ describe("LocalAuthGuard", () => {
         {
           provide: AuthService,
           useValue: {
-            // 模拟AuthService中的方法
             validateUser: jest.fn(),
           },
         },

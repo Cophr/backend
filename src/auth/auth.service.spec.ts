@@ -50,7 +50,6 @@ describe("AuthService", () => {
         {
           provide: JwtService,
           useValue: {
-            // 模拟JwtService中的方法
             sign: jest.fn().mockReturnValue(fakeAccessToken),
           },
         },
