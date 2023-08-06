@@ -37,14 +37,14 @@ describe("JwtAccessGuard", () => {
     const payload = { email: "testuser", id: 1 };
     const token = jwtService.sign(payload);
 
-    const respoese = {};
+    const response = {};
     const context: ExecutionContext = {
       getRequest: () => ({
         headers: {
           authorization: `bearer ${token}`,
         },
       }),
-      getResponse: () => respoese,
+      getResponse: () => response,
       switchToHttp: () => context,
     } as unknown as ExecutionContext;
 
@@ -57,14 +57,14 @@ describe("JwtAccessGuard", () => {
     const payload = { email: "testuser", id: 1 };
     const token = jwtService.sign(payload, { expiresIn: 0 });
 
-    const respoese = {};
+    const response = {};
     const context: ExecutionContext = {
       getRequest: () => ({
         headers: {
           authorization: `bearer ${token}`,
         },
       }),
-      getResponse: () => respoese,
+      getResponse: () => response,
       switchToHttp: () => context,
     } as unknown as ExecutionContext;
 
