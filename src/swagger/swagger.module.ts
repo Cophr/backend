@@ -8,7 +8,7 @@ import { AuthModule } from "src/auth/auth.module";
 import { JwtAccessStrategy } from "src/auth/jwt/jwt-access.strategy";
 import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
-import { jwtAccessConfigJest } from "src/config/jwt.config";
+import { jwtAccessConfig } from "src/config/jwt.config";
 import { UserModule } from "src/user/user.module";
 
 @Module({
@@ -21,7 +21,7 @@ import { UserModule } from "src/user/user.module";
     }),
     UserModule,
     AuthModule,
-    JwtModule.registerAsync(jwtAccessConfigJest),
+    JwtModule.registerAsync(jwtAccessConfig),
   ],
   providers: [AppService, JwtAccessStrategy],
 })

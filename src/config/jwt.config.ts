@@ -9,12 +9,3 @@ export const jwtAccessConfig: JwtModuleAsyncOptions = {
     signOptions: { expiresIn: "1d" },
   }),
 };
-
-export const jwtAccessConfigJest: JwtModuleAsyncOptions = {
-  imports: [ConfigModule],
-  inject: [ConfigService],
-  useFactory: (configService: ConfigService) => ({
-    secret: configService.get("jwtSecret.access"),
-    signOptions: { expiresIn: "1d" },
-  }),
-};

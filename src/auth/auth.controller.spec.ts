@@ -7,7 +7,7 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { type Request } from "express";
 import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
-import { jwtAccessConfigJest } from "src/config/jwt.config";
+import { jwtAccessConfig } from "src/config/jwt.config";
 import { UserEntity } from "src/user/entities/user.entity";
 import type { CreateUserResponse } from "src/user/responses/create-user-response";
 import { UserService } from "src/user/user.service";
@@ -37,7 +37,7 @@ describe("AuthController", () => {
         }),
         PassportModule,
         TypeOrmModule.forRoot(dataSourceJest),
-        JwtModule.registerAsync(jwtAccessConfigJest),
+        JwtModule.registerAsync(jwtAccessConfig),
       ],
       providers: [
         AuthService,
