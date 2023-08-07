@@ -1,4 +1,8 @@
-import { type ExecutionContext, ForbiddenException } from "@nestjs/common";
+import {
+  type ExecutionContext,
+  ForbiddenException,
+  HttpException,
+} from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { Test } from "@nestjs/testing";
 
@@ -85,7 +89,7 @@ describe("LocalAuthGuard", () => {
     try {
       await localAuthGuard.canActivate(mockExecutionContext);
     } catch (error) {
-      if (error instanceof ForbiddenException) {
+      if (error instanceof HttpException) {
         expect(error).toBeInstanceOf(ForbiddenException);
         expect(error.getResponse()).toEqual({
           message: ["Account or password is wrong."],
