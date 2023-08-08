@@ -1,10 +1,9 @@
 import { type ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { Test } from "@nestjs/testing";
 import jestConfig from "src/config/jest.config";
-import { jwtAccessConfig } from "src/config/jwt.config";
 
 import { JwtAccessGuard } from "./jwt-access.guard";
 import { JwtAccessStrategy } from "./jwt-access.strategy";
@@ -12,6 +11,7 @@ import { JwtAccessStrategy } from "./jwt-access.strategy";
 describe("JwtAccessGuard", () => {
   let jwtAccessGuard: JwtAccessGuard;
   let jwtService: JwtService;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -20,13 +20,14 @@ describe("JwtAccessGuard", () => {
           load: [jestConfig],
         }),
         PassportModule,
-        JwtModule.registerAsync(jwtAccessConfig),
+        JwtModule.register({}),
       ],
       providers: [JwtAccessGuard, JwtAccessStrategy, JwtService],
     }).compile();
 
     jwtAccessGuard = moduleRef.get<JwtAccessGuard>(JwtAccessGuard);
     jwtService = moduleRef.get<JwtService>(JwtService);
+    configService = moduleRef.get<ConfigService>(ConfigService);
   });
 
   it("should be defined", () => {
@@ -35,7 +36,11 @@ describe("JwtAccessGuard", () => {
 
   it("should return true for a valid JWT", async () => {
     const payload = { email: "testuser", id: 1 };
-    const token = jwtService.sign(payload);
+    const secret: string | undefined = configService.get("jwtSecret.access");
+    const token = jwtService.sign(payload, {
+      expiresIn: "1h",
+      secret,
+    });
 
     const response = {};
     const context: ExecutionContext = {
@@ -55,7 +60,8 @@ describe("JwtAccessGuard", () => {
 
   it("should throw an error for an expired JWT", async () => {
     const payload = { email: "testuser", id: 1 };
-    const token = jwtService.sign(payload, { expiresIn: 0 });
+    const secret: string | undefined = configService.get("jwtSecret.access");
+    const token = jwtService.sign(payload, { expiresIn: 0, secret });
 
     const response = {};
     const context: ExecutionContext = {

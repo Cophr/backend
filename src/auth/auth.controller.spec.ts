@@ -7,7 +7,6 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { type Request } from "express";
 import { dataSourceJest } from "src/config/data-source";
 import jestConfig from "src/config/jest.config";
-import { jwtAccessConfig } from "src/config/jwt.config";
 import { UserEntity } from "src/user/entities/user.entity";
 import type { CreateUserResponse } from "src/user/responses/create-user-response";
 import { UserService } from "src/user/user.service";
@@ -26,7 +25,7 @@ describe("AuthController", () => {
   let authService: AuthService;
   let userRepository: Repository<UserEntity> | undefined;
 
-  const fakeAccessToken = "mocked_token";
+  const fakeAccessToken = "mocked_access_token";
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,7 +36,7 @@ describe("AuthController", () => {
         }),
         PassportModule,
         TypeOrmModule.forRoot(dataSourceJest),
-        JwtModule.registerAsync(jwtAccessConfig),
+        JwtModule.register({}),
       ],
       providers: [
         AuthService,
@@ -50,7 +49,7 @@ describe("AuthController", () => {
         {
           provide: JwtService,
           useValue: {
-            sign: jest.fn().mockReturnValue(fakeAccessToken),
+            sign: jest.fn(),
           },
         },
         LocalStrategy,
@@ -111,6 +110,11 @@ describe("AuthController", () => {
           id: 1,
         } as JwtUser,
       } as unknown as Request;
+
+      jest
+        .spyOn(authService, "generateAccessToken")
+        .mockImplementation(async () => fakeAccessToken);
+
       const mockAuthService = jest.spyOn(authService, "login");
 
       const result = await authController.login(request);
