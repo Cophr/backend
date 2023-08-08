@@ -1,4 +1,5 @@
 import { ConflictException, HttpStatus, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
@@ -12,6 +13,7 @@ import { type JwtUser } from "./jwt/jwt.interface";
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     @InjectRepository(UserEntity)
@@ -39,11 +41,13 @@ export class AuthService {
     return this.userService.create(userDto);
   }
 
-  async login(user: JwtUser) {
-    const token = this.jwtService.sign(user);
+  async sign(user: JwtUser) {
+    const accessToken = await this.generateAccessToken(user);
+    const refreshToken = await this.generateRefreshToken(user);
 
     return {
-      accessToken: token,
+      accessToken,
+      refreshToken,
       statusCode: HttpStatus.CREATED,
     };
   }
@@ -61,5 +65,33 @@ export class AuthService {
     }
 
     return userData;
+  }
+
+  async generateAccessToken(user: JwtUser): Promise<string> {
+    const payload: JwtUser = {
+      id: user.id,
+    };
+    const secret: string | undefined =
+      this.configService.get("jwtSecret.access");
+    const token = this.jwtService.sign(payload, {
+      expiresIn: "1h",
+      secret,
+    });
+
+    return token;
+  }
+
+  async generateRefreshToken(user: JwtUser): Promise<string> {
+    const payload: JwtUser = {
+      id: user.id,
+    };
+    const secret: string | undefined =
+      this.configService.get("jwtSecret.refresh");
+    const token = this.jwtService.sign(payload, {
+      expiresIn: "7d",
+      secret,
+    });
+
+    return token;
   }
 }

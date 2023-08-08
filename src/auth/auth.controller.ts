@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -18,6 +18,7 @@ import { CreateUserResponse } from "src/user/responses/create-user-response";
 import { AuthService } from "./auth.service";
 import { ForbiddenError } from "./exception/ForbiddenError";
 import { type JwtUser } from "./jwt/jwt.interface";
+import { JwtRefreshGuard } from "./jwt/jwt-refresh.guard";
 import { LocalAuthGuard } from "./local/local-auth.guard";
 import { GenerateTokenResponse } from "./responses/generate-token.response";
 
@@ -63,6 +64,12 @@ export class AuthController {
   })
   @ApiBody({ type: LoginUserDto })
   async login(@Req() request: Request) {
-    return this.authService.login(request.user as JwtUser);
+    return this.authService.sign(request.user as JwtUser);
+  }
+
+  @Get("refresh")
+  @UseGuards(JwtRefreshGuard)
+  async refresh(@Req() request: Request) {
+    return this.login(request);
   }
 }
