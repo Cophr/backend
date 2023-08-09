@@ -4,7 +4,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
@@ -17,15 +17,14 @@ import { UserService } from "src/user/user.service";
 import type { Repository } from "typeorm";
 
 import { AuthService } from "./auth.service";
+import { type JwtUser } from "./jwt/jwt.interface";
 import { JwtAccessStrategy } from "./jwt/jwt-access.strategy";
 import { LocalStrategy } from "./local/local.strategy";
 
 describe("AuthService", () => {
   let authService: AuthService;
   let userService: UserService;
-  let userRepository: Repository<UserEntity> | undefined;
-
-  const fakeAccessToken = "mocked_access_token";
+  let userRepository: Repository<UserEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,19 +44,13 @@ describe("AuthService", () => {
           // 使用測試資料庫的 Repository
           useValue: UserEntity,
         },
-        {
-          provide: JwtService,
-          useValue: {
-            sign: jest.fn(),
-          },
-        },
         LocalStrategy,
         JwtAccessStrategy,
       ],
     }).compile();
 
-    userService = module.get<UserService>(UserService);
     authService = module.get<AuthService>(AuthService);
+    userService = module.get<UserService>(UserService);
     userRepository = module.get<Repository<UserEntity>>(
       getRepositoryToken(UserEntity),
     );
@@ -160,16 +153,23 @@ describe("AuthService", () => {
         email: "test@example.com",
         id: 1,
       };
+      const fakeAccessToken = "mocked_access_token";
+      const fakeRefreshToken = "mocked_refresh_token";
       const expectedStatusCode = HttpStatus.CREATED;
 
       jest
         .spyOn(authService, "generateAccessToken")
-        .mockImplementation(async () => fakeAccessToken);
+        .mockReturnValue(Promise.resolve(fakeAccessToken));
 
-      const result = await authService.login(mockUser);
+      jest
+        .spyOn(authService, "generateRefreshToken")
+        .mockReturnValue(Promise.resolve(fakeRefreshToken));
+
+      const result = await authService.sign(mockUser);
 
       expect(result).toEqual({
         accessToken: fakeAccessToken,
+        refreshToken: fakeRefreshToken,
         statusCode: expectedStatusCode,
       });
     });
@@ -233,7 +233,29 @@ describe("AuthService", () => {
     });
   });
 
+  describe("generate Token", () => {
+    it("should generate access token", async () => {
+      const userId = 1;
+      const payload: JwtUser = {
+        id: userId,
+      };
+      const result = await authService.generateAccessToken(payload);
+
+      expect(result).toBeDefined();
+    });
+
+    it("should generate refresh token", async () => {
+      const userId = 1;
+      const payload: JwtUser = {
+        id: userId,
+      };
+      const result = await authService.generateRefreshToken(payload);
+
+      expect(result).toBeDefined();
+    });
+  });
+
   afterEach(async () => {
-    await userRepository?.clear();
+    await userRepository.clear();
   });
 });

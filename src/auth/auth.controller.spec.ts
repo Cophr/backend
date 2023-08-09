@@ -1,6 +1,6 @@
 import { type HttpException, ConflictException } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { type TestingModule, Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
@@ -25,8 +25,6 @@ describe("AuthController", () => {
   let authService: AuthService;
   let userRepository: Repository<UserEntity> | undefined;
 
-  const fakeAccessToken = "mocked_access_token";
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -45,12 +43,6 @@ describe("AuthController", () => {
           provide: getRepositoryToken(UserEntity),
           // 使用測試資料庫的 Repository
           useValue: UserEntity,
-        },
-        {
-          provide: JwtService,
-          useValue: {
-            sign: jest.fn(),
-          },
         },
         LocalStrategy,
         JwtAccessStrategy,
@@ -104,18 +96,25 @@ describe("AuthController", () => {
         });
     });
 
-    it("should return a token and 201 http code when account information is correct.", async () => {
+    it("should return access, refresh token and 201 http code when account information is correct.", async () => {
       const request: Request = {
         user: {
           id: 1,
         } as JwtUser,
       } as unknown as Request;
 
+      const fakeAccessToken = "mocked_access_token";
+      const fakeRefreshToken = "mocked_refresh_token";
+
       jest
         .spyOn(authService, "generateAccessToken")
-        .mockImplementation(async () => fakeAccessToken);
+        .mockReturnValue(Promise.resolve(fakeAccessToken));
 
-      const mockAuthService = jest.spyOn(authService, "login");
+      jest
+        .spyOn(authService, "generateRefreshToken")
+        .mockReturnValue(Promise.resolve(fakeRefreshToken));
+
+      const mockAuthService = jest.spyOn(authService, "sign");
 
       const result = await authController.login(request);
 
@@ -123,6 +122,40 @@ describe("AuthController", () => {
 
       const expectedResponse: GenerateTokenResponse = {
         accessToken: fakeAccessToken,
+        refreshToken: fakeRefreshToken,
+        statusCode: 201,
+      };
+
+      expect(result).toEqual(expectedResponse);
+    });
+
+    it("should return access, refresh token and 201 http code when refresh token is correct.", async () => {
+      const request: Request = {
+        user: {
+          id: 1,
+        } as JwtUser,
+      } as unknown as Request;
+
+      const fakeAccessToken = "mocked_access_token";
+      const fakeRefreshToken = "mocked_refresh_token";
+
+      jest
+        .spyOn(authService, "generateAccessToken")
+        .mockReturnValue(Promise.resolve(fakeAccessToken));
+
+      jest
+        .spyOn(authService, "generateRefreshToken")
+        .mockReturnValue(Promise.resolve(fakeRefreshToken));
+
+      const mockAuthService = jest.spyOn(authService, "sign");
+
+      const result = await authController.refresh(request);
+
+      expect(mockAuthService).toHaveBeenCalledWith(request.user);
+
+      const expectedResponse: GenerateTokenResponse = {
+        accessToken: fakeAccessToken,
+        refreshToken: fakeRefreshToken,
         statusCode: 201,
       };
 
