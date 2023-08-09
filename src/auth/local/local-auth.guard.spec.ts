@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   HttpException,
 } from "@nestjs/common";
+import { BadRequestException } from "@nestjs/common/exceptions";
 import { PassportModule } from "@nestjs/passport";
 import { Test } from "@nestjs/testing";
 
@@ -94,6 +95,36 @@ describe("LocalAuthGuard", () => {
         expect(error.getResponse()).toEqual({
           message: ["Account or password is wrong."],
           statusCode: 403,
+        });
+      }
+    }
+  });
+
+  it("should return BadRequest and 400 http code when field format validation failed.", async () => {
+    const mockResponse = {};
+    const mockExecutionContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          body: {
+            account: "test",
+          },
+        }),
+        getResponse: () => mockResponse,
+      }),
+    } as ExecutionContext;
+
+    try {
+      await localAuthGuard.canActivate(mockExecutionContext);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.getResponse()).toEqual({
+          error: "Bad Request",
+          message: [
+            "password 必須長度大於等於8個字。",
+            "password 為必填欄位。",
+          ],
+          statusCode: 400,
         });
       }
     }
