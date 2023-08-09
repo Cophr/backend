@@ -14,6 +14,7 @@ describe("JwtAccessGuard", () => {
   let configService: ConfigService;
 
   beforeEach(async () => {
+    jest.useFakeTimers();
     const moduleRef = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
@@ -35,7 +36,7 @@ describe("JwtAccessGuard", () => {
   });
 
   it("should return true for a valid JWT", async () => {
-    const payload = { email: "testuser", id: 1 };
+    const payload = { id: 1 };
     const secret: string | undefined = configService.get("jwtSecret.access");
     const token = jwtService.sign(payload, {
       expiresIn: "1h",
@@ -59,9 +60,11 @@ describe("JwtAccessGuard", () => {
   });
 
   it("should throw an error for an expired JWT", async () => {
-    const payload = { email: "testuser", id: 1 };
+    const payload = { id: 1 };
     const secret: string | undefined = configService.get("jwtSecret.access");
-    const token = jwtService.sign(payload, { expiresIn: 0, secret });
+    const token = jwtService.sign(payload, { expiresIn: "1h", secret });
+
+    jest.advanceTimersByTime(60 * 60 * 1000);
 
     const response = {};
     const context: ExecutionContext = {
@@ -79,5 +82,9 @@ describe("JwtAccessGuard", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(UnauthorizedException);
     }
+  });
+
+  afterEach(async () => {
+    jest.clearAllTimers();
   });
 });
