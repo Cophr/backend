@@ -11,6 +11,7 @@ function setupSwagger(app: INestApplication) {
     .setTitle(process.env.APP_SWAGGER_Title ?? "Cophr")
     .setDescription(process.env.APP_SWAGGER_Description ?? "")
     .setVersion(process.env.APP_SWAGGER_Version ?? "N/A")
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
