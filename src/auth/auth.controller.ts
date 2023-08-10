@@ -1,12 +1,14 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Request } from "express";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
@@ -17,6 +19,7 @@ import { CreateUserResponse } from "src/user/responses/create-user-response";
 
 import { AuthService } from "./auth.service";
 import { ForbiddenError } from "./exception/ForbiddenError";
+import { UnauthorizedError } from "./exception/UnauthorizedError";
 import { type JwtUser } from "./jwt/jwt.interface";
 import { JwtRefreshGuard } from "./jwt/jwt-refresh.guard";
 import { LocalAuthGuard } from "./local/local-auth.guard";
@@ -51,7 +54,8 @@ export class AuthController {
   @Post("login")
   @UseGuards(LocalAuthGuard)
   @ApiOperation({
-    description: "Will return token when the account information is correct.",
+    description:
+      "Will return access and refresh token when the account information is correct.",
     summary: "login with our account",
   })
   @ApiCreatedResponse({
@@ -68,7 +72,25 @@ export class AuthController {
   }
 
   @Get("refresh")
+  @ApiBearerAuth()
   @UseGuards(JwtRefreshGuard)
+  @ApiOperation({
+    description:
+      "Will return access and refresh token when the refresh token carried in the request is valid.",
+    summary: "refresh token",
+  })
+  @ApiCreatedResponse({
+    description: "Success with generated token",
+    type: GenerateTokenResponse,
+  })
+  @ApiUnauthorizedResponse({
+    description: String(
+      "Token error  \n " +
+        "When the token is not carried in the request.  \n" +
+        "When the token has expired or become invalid.",
+    ),
+    type: UnauthorizedError,
+  })
   async refresh(@Req() request: Request) {
     return this.login(request);
   }
