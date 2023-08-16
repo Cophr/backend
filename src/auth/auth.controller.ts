@@ -13,7 +13,7 @@ import {
 import { Request } from "express";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { LoginUserDto } from "src/user/dto/login-user.dto";
-import { CreateUserBadrequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
+import { CreateUserBadRequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
 import { CreateUserConflictError } from "src/user/exceptions/create-user-conflict-error.exception";
 import { CreateUserResponse } from "src/user/responses/create-user-response";
 
@@ -45,7 +45,7 @@ export class AuthController {
   })
   @ApiBadRequestResponse({
     description: "使用者格式不符",
-    type: CreateUserBadrequestError,
+    type: CreateUserBadRequestError,
   })
   async register(@Body() userDto: CreateUserDto) {
     return this.authService.register(userDto);
