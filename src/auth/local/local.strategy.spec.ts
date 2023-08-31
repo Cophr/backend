@@ -29,37 +29,36 @@ describe("LocalStrategy", () => {
     expect(localStrategy).toBeDefined();
   });
 
-  it("should return user payload if user is valid", async () => {
+  describe("validate user", () => {
     const mockAccount = "test";
     const mockPassword = "password";
 
-    const mockUser = {
-      id: 1,
-    };
+    it("should return user payload if user is valid", async () => {
+      const mockUser = {
+        id: 1,
+      };
 
-    jest
-      .spyOn(authService, "validateUser")
-      .mockImplementation(async () => mockUser);
+      jest
+        .spyOn(authService, "validateUser")
+        .mockImplementation(async () => mockUser);
 
-    const result = await localStrategy.validate(mockAccount, mockPassword);
+      const result = await localStrategy.validate(mockAccount, mockPassword);
 
-    expect(result).toEqual({
-      id: mockUser.id,
+      expect(result).toEqual({
+        id: mockUser.id,
+      });
     });
-  });
 
-  it("should throw ForbiddenException if user is invalid", async () => {
-    const mockAccount = "test";
-    const mockPassword = "password";
+    it("should throw ForbiddenException if user is invalid", async () => {
+      jest
+        .spyOn(authService, "validateUser")
+        .mockImplementation(async () => null);
 
-    jest
-      .spyOn(authService, "validateUser")
-      .mockImplementation(async () => null);
-
-    try {
-      await localStrategy.validate(mockAccount, mockPassword);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ForbiddenException);
-    }
+      try {
+        await localStrategy.validate(mockAccount, mockPassword);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ForbiddenException);
+      }
+    });
   });
 });

@@ -11,12 +11,12 @@ export class JwtAccessStrategy extends PassportStrategy(
   "jwt-access",
 ) {
   constructor(configService: ConfigService) {
-    const secrect: string | undefined = configService.get("jwtSecret.access");
+    const secret: string | undefined = configService.get("jwtSecret.access");
 
     super({
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: secrect,
+      secretOrKey: secret,
     });
   }
 

@@ -12,6 +12,8 @@ describe("JwtAccessGuard", () => {
   let jwtAccessGuard: JwtAccessGuard;
   let jwtService: JwtService;
   let configService: ConfigService;
+  let secret: string | undefined;
+  let token: string;
 
   beforeEach(async () => {
     jest.useFakeTimers();
@@ -29,62 +31,52 @@ describe("JwtAccessGuard", () => {
     jwtAccessGuard = moduleRef.get<JwtAccessGuard>(JwtAccessGuard);
     jwtService = moduleRef.get<JwtService>(JwtService);
     configService = moduleRef.get<ConfigService>(ConfigService);
+    secret = configService.get("jwtSecret.access");
+    token = jwtService.sign(
+      {
+        id: 1,
+      },
+      {
+        expiresIn: "1h",
+        secret,
+      },
+    );
   });
 
   it("should be defined", () => {
     expect(jwtAccessGuard).toBeDefined();
   });
 
-  it("should return true for a valid JWT", async () => {
-    const payload = { id: 1 };
-    const secret: string | undefined = configService.get("jwtSecret.access");
-    const token = jwtService.sign(payload, {
-      expiresIn: "1h",
-      secret,
+  describe("valid JWT", () => {
+    const response = {};
+    const context: ExecutionContext = {
+      getRequest: () => ({
+        headers: {
+          authorization: `bearer ${token}`,
+        },
+      }),
+      getResponse: () => response,
+      switchToHttp: () => context,
+    } as unknown as ExecutionContext;
+
+    it("should return true for a valid JWT", async () => {
+      const canActivate = await jwtAccessGuard.canActivate(context);
+
+      expect(canActivate).toBe(true);
     });
 
-    const response = {};
-    const context: ExecutionContext = {
-      getRequest: () => ({
-        headers: {
-          authorization: `bearer ${token}`,
-        },
-      }),
-      getResponse: () => response,
-      switchToHttp: () => context,
-    } as unknown as ExecutionContext;
+    it("should throw an error for an expired JWT", async () => {
+      jest.advanceTimersByTime(60 * 60 * 1000);
 
-    const canActivate = await jwtAccessGuard.canActivate(context);
+      try {
+        await jwtAccessGuard.canActivate(context);
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnauthorizedException);
+      }
+    });
 
-    expect(canActivate).toBe(true);
-  });
-
-  it("should throw an error for an expired JWT", async () => {
-    const payload = { id: 1 };
-    const secret: string | undefined = configService.get("jwtSecret.access");
-    const token = jwtService.sign(payload, { expiresIn: "1h", secret });
-
-    jest.advanceTimersByTime(60 * 60 * 1000);
-
-    const response = {};
-    const context: ExecutionContext = {
-      getRequest: () => ({
-        headers: {
-          authorization: `bearer ${token}`,
-        },
-      }),
-      getResponse: () => response,
-      switchToHttp: () => context,
-    } as unknown as ExecutionContext;
-
-    try {
-      await jwtAccessGuard.canActivate(context);
-    } catch (error) {
-      expect(error).toBeInstanceOf(UnauthorizedException);
-    }
-  });
-
-  afterEach(async () => {
-    jest.clearAllTimers();
+    afterEach(async () => {
+      jest.clearAllTimers();
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { type HttpException, ConflictException } from "@nestjs/common";
+import { ConflictException } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
@@ -57,55 +57,55 @@ describe("AuthController", () => {
   });
 
   describe("create", () => {
+    const createUserDto: CreateUserDto = {
+      account: "account",
+      email: "jhon@gmail.com",
+      name: "displayname",
+      password: "Password@123",
+    };
+    let mockedAuthService: jest.SpyInstance;
+
+    beforeEach(async () => {
+      mockedAuthService = jest.spyOn(authService, "register");
+    });
+
     it("應該會創建一個使用者，並返回 201 狀態碼", async () => {
-      const createUserDto: CreateUserDto = {
-        account: "account",
-        email: "jhon@gmail.com",
-        name: "displayname",
-        password: "Password@123",
-      };
       const expectedResponse: CreateUserResponse = {
         message: "創建成功",
         statusCode: 201,
       };
 
-      jest.spyOn(authService, "register").mockResolvedValue(expectedResponse);
+      mockedAuthService.mockResolvedValue(expectedResponse);
+
       const result = await authController.register(createUserDto);
 
       expect(result).toEqual(expectedResponse);
     });
 
     it("應該會發生資料使用者重覆，並返回 409 狀態碼", async () => {
-      const createUserDto1: CreateUserDto = {
-        account: "account1",
-        email: "jhon1@gmail.com",
-        name: "displayname",
-        password: "Password@123",
-      };
-
-      await authService.register(createUserDto1);
-      await authService
-        .register(createUserDto1)
-        .catch((error: HttpException) => {
-          expect(error).toBeInstanceOf(ConflictException);
-          expect(error.getResponse()).toEqual({
-            error: "Conflict",
-            message: ["email 已被註冊。", "account 已被註冊。"],
-            statusCode: 409,
-          });
+      await authService.register(createUserDto);
+      await authService.register(createUserDto).catch(error => {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect((error as ConflictException).getResponse()).toEqual({
+          error: "Conflict",
+          message: ["email 已被註冊。", "account 已被註冊。"],
+          statusCode: 409,
         });
+      });
     });
+  });
 
-    it("should return access, refresh token and 201 http code when account information is correct.", async () => {
-      const request: Request = {
-        user: {
-          id: 1,
-        } as JwtUser,
-      } as unknown as Request;
+  describe("login and refresh", () => {
+    const request: Request = {
+      user: {
+        id: 1,
+      } as JwtUser,
+    } as unknown as Request;
+    const fakeAccessToken = "mocked_access_token";
+    const fakeRefreshToken = "mocked_refresh_token";
+    let mockedAuthService: jest.SpyInstance;
 
-      const fakeAccessToken = "mocked_access_token";
-      const fakeRefreshToken = "mocked_refresh_token";
-
+    beforeEach(async () => {
       jest
         .spyOn(authService, "generateAccessToken")
         .mockReturnValue(Promise.resolve(fakeAccessToken));
@@ -114,12 +114,13 @@ describe("AuthController", () => {
         .spyOn(authService, "generateRefreshToken")
         .mockReturnValue(Promise.resolve(fakeRefreshToken));
 
-      const mockAuthService = jest.spyOn(authService, "sign");
+      mockedAuthService = jest.spyOn(authService, "sign");
+    });
 
+    it("should return access, refresh token and 201 http code when account information is correct.", async () => {
       const result = await authController.login(request);
 
-      expect(mockAuthService).toHaveBeenCalledWith(request.user);
-
+      expect(mockedAuthService).toHaveBeenCalledWith(request.user);
       const expectedResponse: GenerateTokenResponse = {
         accessToken: fakeAccessToken,
         refreshToken: fakeRefreshToken,
@@ -130,29 +131,9 @@ describe("AuthController", () => {
     });
 
     it("should return access, refresh token and 201 http code when refresh token is correct.", async () => {
-      const request: Request = {
-        user: {
-          id: 1,
-        } as JwtUser,
-      } as unknown as Request;
-
-      const fakeAccessToken = "mocked_access_token";
-      const fakeRefreshToken = "mocked_refresh_token";
-
-      jest
-        .spyOn(authService, "generateAccessToken")
-        .mockReturnValue(Promise.resolve(fakeAccessToken));
-
-      jest
-        .spyOn(authService, "generateRefreshToken")
-        .mockReturnValue(Promise.resolve(fakeRefreshToken));
-
-      const mockAuthService = jest.spyOn(authService, "sign");
-
       const result = await authController.refresh(request);
 
-      expect(mockAuthService).toHaveBeenCalledWith(request.user);
-
+      expect(mockedAuthService).toHaveBeenCalledWith(request.user);
       const expectedResponse: GenerateTokenResponse = {
         accessToken: fakeAccessToken,
         refreshToken: fakeRefreshToken,

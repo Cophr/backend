@@ -40,7 +40,6 @@ describe("UserService", () => {
     };
     const user = await userService.create(rawUser);
 
-    expect(user).toBeDefined();
     expect(user.statusCode).toEqual(HttpStatus.CREATED);
     expect(user.message).toEqual("創建成功");
   });
@@ -61,7 +60,6 @@ describe("UserService", () => {
 
     const user = await userService.findOne(account);
 
-    expect(user).toBeDefined();
     expect(user).toEqual(mockUser);
   });
 

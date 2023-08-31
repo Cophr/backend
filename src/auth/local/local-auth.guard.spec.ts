@@ -1,11 +1,8 @@
-import {
-  type ExecutionContext,
-  ForbiddenException,
-  HttpException,
-} from "@nestjs/common";
+import { type ExecutionContext, ForbiddenException } from "@nestjs/common";
 import { BadRequestException } from "@nestjs/common/exceptions";
 import { PassportModule } from "@nestjs/passport";
 import { Test } from "@nestjs/testing";
+import { type LoginUserDto } from "src/user/dto/login-user.dto";
 
 import { AuthService } from "../auth.service";
 import { LocalStrategy } from "./local.strategy";
@@ -34,6 +31,19 @@ describe("LocalAuthGuard", () => {
     authService = moduleRef.get<AuthService>(AuthService);
   });
 
+  function createMockExecutionContext(requestBody: LoginUserDto) {
+    const mockResponse = {};
+
+    return {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          body: requestBody,
+        }),
+        getResponse: () => mockResponse,
+      }),
+    } as ExecutionContext;
+  }
+
   it("should be defined", () => {
     expect(localAuthGuard).toBeDefined();
   });
@@ -45,88 +55,56 @@ describe("LocalAuthGuard", () => {
     };
 
     const mockRequest = {
-      body: {
-        account: "test",
-        password: "password",
-      },
-    };
-
-    const mockResponse = {};
-
-    const mockExecutionContext = {
-      switchToHttp: () => ({
-        getRequest: () => mockRequest,
-        getResponse: () => mockResponse,
-      }),
-    } as ExecutionContext;
+      account: "test",
+      password: "password",
+    } as LoginUserDto;
 
     jest
       .spyOn(authService, "validateUser")
       .mockImplementation(async () => mockUser);
 
-    const result = await localAuthGuard.canActivate(mockExecutionContext);
+    const result = await localAuthGuard.canActivate(
+      createMockExecutionContext(mockRequest),
+    );
 
     expect(result).toBe(true);
   });
 
   it("should return Forbidden and 403 http code when account information is wrong.", async () => {
-    const mockResponse = {};
-    const mockExecutionContext = {
-      switchToHttp: () => ({
-        getRequest: () => ({
-          body: {
-            account: "test",
-            password: "password",
-          },
-        }),
-        getResponse: () => mockResponse,
-      }),
-    } as ExecutionContext;
+    const mockRequest = {
+      account: "test",
+      password: "password",
+    } as LoginUserDto;
 
     jest
       .spyOn(authService, "validateUser")
       .mockImplementation(async () => null);
 
     try {
-      await localAuthGuard.canActivate(mockExecutionContext);
+      await localAuthGuard.canActivate(createMockExecutionContext(mockRequest));
     } catch (error) {
-      if (error instanceof HttpException) {
-        expect(error).toBeInstanceOf(ForbiddenException);
-        expect(error.getResponse()).toEqual({
-          message: ["Account or password is wrong."],
-          statusCode: 403,
-        });
-      }
+      expect(error).toBeInstanceOf(ForbiddenException);
+      expect((error as BadRequestException).getResponse()).toEqual({
+        message: ["Account or password is wrong."],
+        statusCode: 403,
+      });
     }
   });
 
   it("should return BadRequest and 400 http code when field format validation failed.", async () => {
-    const mockResponse = {};
-    const mockExecutionContext = {
-      switchToHttp: () => ({
-        getRequest: () => ({
-          body: {
-            account: "test",
-          },
-        }),
-        getResponse: () => mockResponse,
-      }),
-    } as ExecutionContext;
+    const mockRequest = {
+      account: "test",
+    } as LoginUserDto;
 
     try {
-      await localAuthGuard.canActivate(mockExecutionContext);
+      await localAuthGuard.canActivate(createMockExecutionContext(mockRequest));
     } catch (error) {
-      if (error instanceof HttpException) {
-        expect(error).toBeInstanceOf(BadRequestException);
-        expect(error.getResponse()).toEqual({
-          error: "Bad Request",
-          message: [
-            "password 必須長度大於等於8個字。",
-            "password 為必填欄位。",
-          ],
-          statusCode: 400,
-        });
-      }
+      expect(error).toBeInstanceOf(BadRequestException);
+      expect((error as BadRequestException).getResponse()).toEqual({
+        error: "Bad Request",
+        message: ["password 必須長度大於等於8個字。", "password 為必填欄位。"],
+        statusCode: 400,
+      });
     }
   });
 });
