@@ -19,7 +19,7 @@ export class GenerateTokenResponse {
 
   @ApiProperty({
     description: "HTTP Code",
-    example: "201",
+    example: 201,
     type: "number",
   })
   public readonly statusCode: number;

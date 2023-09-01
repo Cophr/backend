@@ -11,15 +11,15 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { Request } from "express";
+import { BadRequestError } from "src/error/bad-request-error";
+import { ConflictError } from "src/error/conflict-error";
+import { ForbiddenError } from "src/error/forbidden-error";
+import { UnauthorizedError } from "src/error/unauthorized-error";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { LoginUserDto } from "src/user/dto/login-user.dto";
-import { CreateUserBadRequestError } from "src/user/exceptions/create-user-badrequest-error.exception";
-import { CreateUserConflictError } from "src/user/exceptions/create-user-conflict-error.exception";
 import { CreateUserResponse } from "src/user/responses/create-user-response";
 
 import { AuthService } from "./auth.service";
-import { ForbiddenError } from "./exception/ForbiddenError";
-import { UnauthorizedError } from "./exception/UnauthorizedError";
 import { type JwtUser } from "./jwt/jwt.interface";
 import { JwtRefreshGuard } from "./jwt/jwt-refresh.guard";
 import { LocalAuthGuard } from "./local/local-auth.guard";
@@ -41,11 +41,11 @@ export class AuthController {
   })
   @ApiConflictResponse({
     description: "使用者資料重覆",
-    type: CreateUserConflictError,
+    type: ConflictError,
   })
   @ApiBadRequestResponse({
     description: "使用者格式不符",
-    type: CreateUserBadRequestError,
+    type: BadRequestError,
   })
   async register(@Body() userDto: CreateUserDto) {
     return this.authService.register(userDto);

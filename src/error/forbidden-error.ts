@@ -1,17 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class UnauthorizedError {
+export class ForbiddenError {
   @ApiProperty({
     description: "HTTP Code",
-    example: "401",
+    example: 403,
     type: "number",
   })
   public readonly statusCode: number;
 
   @ApiProperty({
-    description: "Error message",
-    example: "Unauthorized",
+    description: "Error Message",
+    example: "Error Message",
     type: "string",
   })
-  public readonly message: string;
+  public readonly error: string;
 }
