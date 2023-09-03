@@ -42,6 +42,14 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   DB_TIMEZONE: string;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_ACCESS_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_REFRESH_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

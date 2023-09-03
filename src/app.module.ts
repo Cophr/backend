@@ -5,6 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
+import appConfig from "./config/app.config";
 import { dataSourceOptions } from "./config/data-source";
 import { validate } from "./config/env.validation";
 import { UserModule } from "./user/user.module";
@@ -13,6 +14,8 @@ import { UserModule } from "./user/user.module";
   controllers: [AppController],
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
+      load: [appConfig],
       validate,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
