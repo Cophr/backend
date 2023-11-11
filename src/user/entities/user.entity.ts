@@ -1,8 +1,10 @@
+import { OauthIntegration } from "src/auth/entities/oauth.integrations.entity";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -25,4 +27,9 @@ export class UserEntity extends BaseEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => OauthIntegration, integration => integration.authProvider, {
+    cascade: true,
+  })
+  oauthIntegration: OauthIntegration[];
 }
