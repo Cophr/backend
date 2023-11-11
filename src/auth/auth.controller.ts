@@ -20,6 +20,8 @@ import { LoginUserDto } from "src/user/dto/login-user.dto";
 import { CreateUserResponse } from "src/user/responses/create-user-response";
 
 import { AuthService } from "./auth.service";
+import { GoogleOauthGuard } from "./google/google.guard";
+import { type GoogleProfile } from "./google/google.profile";
 import { type JwtUser } from "./jwt/jwt.interface";
 import { JwtRefreshGuard } from "./jwt/jwt-refresh.guard";
 import { LocalAuthGuard } from "./local/local-auth.guard";
@@ -93,5 +95,17 @@ export class AuthController {
   })
   async refresh(@Req() request: Request) {
     return this.login(request);
+  }
+
+  //  Google
+  @Get("/google")
+  @UseGuards(GoogleOauthGuard)
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async googleAuth() {}
+
+  @Get("google/redirect")
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthRedirect(@Req() req: Request) {
+    return this.authService.googleLogin(req.user as GoogleProfile);
   }
 }
