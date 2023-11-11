@@ -7,6 +7,7 @@ import { UserModule } from "src/user/user.module";
 
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { GoogleStrategy } from "./google/google.strategy";
 import { JwtAccessStrategy } from "./jwt/jwt-access.strategy";
 import { JwtRefreshStrategy } from "./jwt/jwt-refresh.strategy";
 import { LocalStrategy } from "./local/local.strategy";
@@ -24,6 +25,7 @@ import { LocalStrategy } from "./local/local.strategy";
     LocalStrategy,
     JwtAccessStrategy,
     JwtRefreshStrategy,
+    GoogleStrategy,
   ],
 })
 export class AuthModule {}
