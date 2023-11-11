@@ -20,7 +20,7 @@ export class UserEntity extends BaseEntity {
   @Column({ unique: true })
   account: string;
 
-  @Column("varchar", { length: 60, nullable: true })
+  @Column("varchar", { default: () => "NULL", length: 60, nullable: true })
   password: string;
 
   @CreateDateColumn()
